@@ -15,9 +15,8 @@ import cft.intensive.potato.model.User;
 import cft.intensive.potato.model.Wallet;
 import cft.intensive.potato.model.transfer.Transfer;
 import cft.intensive.potato.model.transfer.TransferType;
+import cft.intensive.potato.model.transfer.UserTransferWay;
 import jakarta.transaction.Transactional;
-import lombok.Builder;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -56,12 +55,9 @@ public class TransferServiceImp implements TransferService {
         }
 
         int receiverWalletId = 0;
-//        String receiverTelephoneNumber = null;
         switch (transferCreateRequest.getDestination()) {
             case USER -> {
-                UserIdAndPhone userIdAndPhone = getReceiverWalletIdAndPhone(transferCreateRequest);
-                receiverWalletId = userIdAndPhone.getUserId();
-//                receiverTelephoneNumber = userIdAndPhone.getPhone();
+                receiverWalletId = getReceiverWalletIdWhenUserIsDestination(transferCreateRequest);
             }
             case SERVICE -> { /*TODO
             по заданию непонятно, зачем отправлять за услугу, ведь для этого есть выставление счета,
@@ -73,7 +69,6 @@ public class TransferServiceImp implements TransferService {
                 .destination(transferCreateRequest.getDestination())
                 .userTransferWay(transferCreateRequest.getUserTransferWay())
                 .receiverWalletId(receiverWalletId)
-//                .receiverTelephoneNumber(receiverTelephoneNumber)
                 .serviceId(transferCreateRequest.getServiceId())
                 .amount(transferCreateRequest.getAmount())
                 .status(false)
@@ -99,21 +94,16 @@ public class TransferServiceImp implements TransferService {
         walletRepository.addAmountOnBalance(receiverWalletId, amountDiff);
     }
 
-    private UserIdAndPhone getReceiverWalletIdAndPhone(TransferCreateRequest transferCreateRequest) {
-        UserIdAndPhone userIdAndPhone = null;
-        switch (transferCreateRequest.getUserTransferWay()) {
-            case BY_ID -> {
-                User user = Optional.ofNullable(usersRepository.getByWalletId(transferCreateRequest.getSenderWalletId()))
-                        .orElseThrow(() -> new NotFoundException("wallet not found by id"));
-                userIdAndPhone = UserIdAndPhone.builder().userId(user.getId()).phone(user.getPhone()).build();
-            }
-            case BY_TELEPHONE -> {
-                User user = Optional.ofNullable(usersRepository.getByTelephone(transferCreateRequest.getReceiverPhone()))
-                        .orElseThrow(() -> new NotFoundException("wallet not found by telephone"));
-                userIdAndPhone = UserIdAndPhone.builder().userId(user.getId()).phone(user.getPhone()).build();
-            }
+    private int getReceiverWalletIdWhenUserIsDestination(TransferCreateRequest transferCreateRequest) {
+        int receiverUserId = transferCreateRequest.getReceiverWalletId();
+        if (transferCreateRequest.getUserTransferWay() == UserTransferWay.BY_TELEPHONE) {
+            User user = Optional.ofNullable(usersRepository.getByTelephone(transferCreateRequest.getReceiverPhone()))
+                    .orElseThrow(() -> new NotFoundException("user not found by phone"));
+            receiverUserId = user.getId();
         }
-        return userIdAndPhone;
+        Wallet receiverWallet = Optional.ofNullable(walletRepository.getById(receiverUserId))
+                .orElseThrow(() -> new NotFoundException("wallet not found by id"));
+        return receiverWallet.getId();
     }
 
     @Override
@@ -138,11 +128,4 @@ public class TransferServiceImp implements TransferService {
                             .build();
                 }).collect(Collectors.toList());
     }
-}
-
-@Builder
-@Getter
-class UserIdAndPhone {
-    private final int userId;
-    private final String phone;
 }
