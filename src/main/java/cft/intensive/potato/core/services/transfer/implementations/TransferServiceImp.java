@@ -2,6 +2,7 @@ package cft.intensive.potato.core.services.transfer.implementations;
 
 import cft.intensive.potato.api.dto.transfer.TransferCreateRequest;
 import cft.intensive.potato.api.dto.transfer.TransferCreateResponse;
+import cft.intensive.potato.api.dto.transfer.TransferGetResponse;
 import cft.intensive.potato.core.exceptions.IncorrectRequestException;
 import cft.intensive.potato.core.exceptions.transfer.NotEnoughtMoneyException;
 import cft.intensive.potato.core.exceptions.transfer.NotFoundException;
@@ -10,17 +11,24 @@ import cft.intensive.potato.core.repository.UsersRepository;
 import cft.intensive.potato.core.repository.WalletRepository;
 import cft.intensive.potato.core.services.transfer.TransferService;
 import cft.intensive.potato.core.services.transfer.TransferValidation;
+import cft.intensive.potato.model.User;
 import cft.intensive.potato.model.Wallet;
 import cft.intensive.potato.model.transfer.Transfer;
+import cft.intensive.potato.model.transfer.TransferType;
 import jakarta.transaction.Transactional;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -41,7 +49,7 @@ public class TransferServiceImp implements TransferService {
         }
 
         Wallet senderWallet = Optional.ofNullable(walletRepository.getById(transferCreateRequest.getSenderWalletId()))
-                .orElseThrow(() -> new NotFoundException("wallet not found"));
+                .orElseThrow(() -> new NotFoundException("wallet not found by id"));
 
         if (!transferValidation.isEnoughtMoneyForTransfer(transferCreateRequest)) {
             throw new NotEnoughtMoneyException("not enought money for transfer");
@@ -50,9 +58,11 @@ public class TransferServiceImp implements TransferService {
         int receiverWalletId = 0;
         switch (transferCreateRequest.getDestination()) {
             case USER -> {
-                receiverWalletId = getReceiverWalletIdWhenUserDestination(transferCreateRequest);
+                receiverWalletId = getReceiverWalletIdAndPhone(transferCreateRequest);
             }
-            case SERVICE -> { /*TODO (in new life)*/ }
+            case SERVICE -> { /*TODO
+            по заданию непонятно, зачем отправлять за услугу, ведь для этого есть выставление счета,
+            а непосредственно выставление услуг не было)*/ }
         }
 
         Transfer transfer = Transfer.builder()
@@ -60,7 +70,7 @@ public class TransferServiceImp implements TransferService {
                 .destination(transferCreateRequest.getDestination())
                 .userTransferWay(transferCreateRequest.getUserTransferWay())
                 .receiverWalletId(transferCreateRequest.getSenderWalletId())
-                .receiverTelephoneNumber(transferCreateRequest.getReceiverTelephoneNumber())
+                .receiverTelephoneNumber(transferCreateRequest.getReceiverPhone())
                 .serviceId(transferCreateRequest.getServiceId())
                 .amount(transferCreateRequest.getAmount())
                 .status(false)
@@ -86,39 +96,70 @@ public class TransferServiceImp implements TransferService {
         walletRepository.addAmountOnBalance(receiverWalletId, amountDiff);
     }
 
-    private int getReceiverWalletIdWhenUserDestination(TransferCreateRequest transferCreateRequest) {
-        int receiverWalletId = 0;
+    private UserIdAndPhone getReceiverWalletIdAndPhone(TransferCreateRequest transferCreateRequest) {
+        UserIdAndPhone userIdAndPhone = null;
         switch (transferCreateRequest.getUserTransferWay()) {
             case BY_ID -> {
-                receiverWalletId = transferWayByIdHandler(transferCreateRequest);
+                User user = Optional.ofNullable(usersRepository.getByWalletId(transferCreateRequest.getSenderWalletId()))
+                        .orElseThrow(() -> new NotFoundException("wallet not found by id"));
+                userIdAndPhone = UserIdAndPhone.builder().userId(user.getId()).phone(user.getPhone()).build();
             }
             case BY_TELEPHONE -> {
-                receiverWalletId = transferWayByTelephone(transferCreateRequest);
+                User user = Optional.ofNullable(usersRepository.getByTelephone(transferCreateRequest.getReceiverPhone()))
+                        .orElseThrow(() -> new NotFoundException("wallet not found by telephone"));
+                userIdAndPhone = UserIdAndPhone.builder().userId(user.getId()).phone(user.getPhone()).build();
             }
         }
-        return receiverWalletId;
+        return userIdAndPhone;
     }
 
-    private int transferWayByIdHandler(TransferCreateRequest transferCreateRequest) {
+    /*private UserIdAndPhone transferWayByIdHandler(TransferCreateRequest transferCreateRequest) {
         if (!walletRepository.walletIsExist(transferCreateRequest.getReceiverWalletId())) {
             throw new NotEnoughtMoneyException("not found receiver wallet");
         }
+
+
+        return UserIdAndPhone.builder().userId().phone().build();
         return transferCreateRequest.getReceiverWalletId();
     }
 
-    private int transferWayByTelephone(TransferCreateRequest transferCreateRequest) {
+    private UserIdAndPhone transferWayByTelephone(TransferCreateRequest transferCreateRequest) {
         if (!usersRepository.userIsExist(transferCreateRequest.getReceiverTelephoneNumber())) {
             throw new NotEnoughtMoneyException("not found receiver wallet");
         }
         return usersRepository.getByTelephone(transferCreateRequest.getReceiverTelephoneNumber())
                 .getWallet().getId();
-    }
-
-    private void ServiceDestinationHandler(TransferCreateRequest transferCreateRequest) { /*TODO (in new life)*/ }
+    }*/
 
     @Override
-    public List<Transfer> getById() {
-        //TODO
-        return null;
+    public List<TransferGetResponse> getAllByUserId(int id) {
+        User user = Optional.ofNullable(usersRepository.getById(id))
+                .orElseThrow(() -> new NotFoundException("user not found by id"));
+
+        String userPhone = user.getPhone();
+
+        Map<Integer, String> userTelephoneMap = new HashMap();
+        List<Transfer> transferList = transferRepository.getAllTransfersByUserIdAndTelephone(id, userPhone);
+        return transferList.stream()
+                .map(transfer -> {
+                    int receiverId = transfer.getReceiverWalletId();
+                    TransferType transferType = TransferType.SEND;
+                    return TransferGetResponse.builder()
+                            .id(transfer.getId())
+                            .transferType(TransferType.SEND)
+                            .secondSideUserId(0)
+                            .secondSideWalletId(0)
+                            .amount(transfer.getAmount())
+                            .status(transfer.getStatus())
+                            .date(transfer.getDate())
+                            .build();
+                }).collect(Collectors.toList());
     }
+}
+
+@Builder
+@Getter
+class UserIdAndPhone {
+    private final int userId;
+    private final String phone;
 }

@@ -13,4 +13,6 @@ public interface UsersRepository {
     User getById(int id);
 
     User getByTelephone(String telephoneNumber);
+
+    User getByWalletId(int id);
 }

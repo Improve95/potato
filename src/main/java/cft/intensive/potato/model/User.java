@@ -36,7 +36,7 @@ public class User {
     private String secondName;
 
     @Column(name = "telephone_number")
-    private String telephoneNumber;
+    private String phone;
 
     private String email;
 

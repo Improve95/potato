@@ -67,7 +67,7 @@ public class UserServiceImp implements UserService {
         return UserGetResponse.builder()
                 .firstName(user.getFirstName())
                 .secondName(user.getSecondName())
-                .telephoneNumber(user.getTelephoneNumber())
+                .telephoneNumber(user.getPhone())
                 .email(user.getEmail())
                 .birthdate(user.getBirthdate())
                 .build();
