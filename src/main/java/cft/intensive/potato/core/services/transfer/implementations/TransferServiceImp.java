@@ -41,10 +41,10 @@ public class TransferServiceImp implements TransferService {
         }
 
         Wallet senderWallet = Optional.ofNullable(walletRepository.getById(transferCreateRequest.getSenderWalletId()))
-                .orElseThrow(() -> new NotFoundException("wallet not found", 404));
+                .orElseThrow(() -> new NotFoundException("wallet not found"));
 
         if (!transferValidation.isEnoughtMoneyForTransfer(transferCreateRequest)) {
-            throw new NotEnoughtMoneyException("not enought money for transfer", 405);
+            throw new NotEnoughtMoneyException("not enought money for transfer");
         }
 
         int receiverWalletId = 0;
@@ -101,14 +101,14 @@ public class TransferServiceImp implements TransferService {
 
     private int transferWayByIdHandler(TransferCreateRequest transferCreateRequest) {
         if (!walletRepository.walletIsExist(transferCreateRequest.getReceiverWalletId())) {
-            throw new NotEnoughtMoneyException("not found receiver wallet", 404);
+            throw new NotEnoughtMoneyException("not found receiver wallet");
         }
         return transferCreateRequest.getReceiverWalletId();
     }
 
     private int transferWayByTelephone(TransferCreateRequest transferCreateRequest) {
         if (!usersRepository.userIsExist(transferCreateRequest.getReceiverTelephoneNumber())) {
-            throw new NotEnoughtMoneyException("not found receiver wallet", 404);
+            throw new NotEnoughtMoneyException("not found receiver wallet");
         }
         return usersRepository.getByTelephone(transferCreateRequest.getReceiverTelephoneNumber())
                 .getWallet().getId();
