@@ -37,8 +37,8 @@ public class Transfer {
     @Column(name = "receiver_wallet_id")
     private int receiverWalletId;
 
-    @Column(name = "receiver_telephone_number")
-    private String receiverTelephoneNumber;
+   /* @Column(name = "receiver_telephone_number")
+    private String receiverTelephoneNumber;*/
 
     @Column(name = "service_id")
     private int serviceId;

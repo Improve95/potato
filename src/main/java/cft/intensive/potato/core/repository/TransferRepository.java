@@ -14,5 +14,5 @@ public interface TransferRepository {
 
     void changeTransferStatus(int id, boolean status);
 
-    List<Transfer> getAllTransfersByUserIdAndTelephone(int id, String telephoneNumber);
+    List<Transfer> getAllTransfersByUserId(int id);
 }

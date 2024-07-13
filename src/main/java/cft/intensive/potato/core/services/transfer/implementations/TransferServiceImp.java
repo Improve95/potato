@@ -56,9 +56,12 @@ public class TransferServiceImp implements TransferService {
         }
 
         int receiverWalletId = 0;
+//        String receiverTelephoneNumber = null;
         switch (transferCreateRequest.getDestination()) {
             case USER -> {
-                receiverWalletId = getReceiverWalletIdAndPhone(transferCreateRequest);
+                UserIdAndPhone userIdAndPhone = getReceiverWalletIdAndPhone(transferCreateRequest);
+                receiverWalletId = userIdAndPhone.getUserId();
+//                receiverTelephoneNumber = userIdAndPhone.getPhone();
             }
             case SERVICE -> { /*TODO
             по заданию непонятно, зачем отправлять за услугу, ведь для этого есть выставление счета,
@@ -69,8 +72,8 @@ public class TransferServiceImp implements TransferService {
                 .senderWalletId(transferCreateRequest.getSenderWalletId())
                 .destination(transferCreateRequest.getDestination())
                 .userTransferWay(transferCreateRequest.getUserTransferWay())
-                .receiverWalletId(transferCreateRequest.getSenderWalletId())
-                .receiverTelephoneNumber(transferCreateRequest.getReceiverPhone())
+                .receiverWalletId(receiverWalletId)
+//                .receiverTelephoneNumber(receiverTelephoneNumber)
                 .serviceId(transferCreateRequest.getServiceId())
                 .amount(transferCreateRequest.getAmount())
                 .status(false)
@@ -113,33 +116,13 @@ public class TransferServiceImp implements TransferService {
         return userIdAndPhone;
     }
 
-    /*private UserIdAndPhone transferWayByIdHandler(TransferCreateRequest transferCreateRequest) {
-        if (!walletRepository.walletIsExist(transferCreateRequest.getReceiverWalletId())) {
-            throw new NotEnoughtMoneyException("not found receiver wallet");
-        }
-
-
-        return UserIdAndPhone.builder().userId().phone().build();
-        return transferCreateRequest.getReceiverWalletId();
-    }
-
-    private UserIdAndPhone transferWayByTelephone(TransferCreateRequest transferCreateRequest) {
-        if (!usersRepository.userIsExist(transferCreateRequest.getReceiverTelephoneNumber())) {
-            throw new NotEnoughtMoneyException("not found receiver wallet");
-        }
-        return usersRepository.getByTelephone(transferCreateRequest.getReceiverTelephoneNumber())
-                .getWallet().getId();
-    }*/
-
     @Override
     public List<TransferGetResponse> getAllByUserId(int id) {
         User user = Optional.ofNullable(usersRepository.getById(id))
                 .orElseThrow(() -> new NotFoundException("user not found by id"));
 
-        String userPhone = user.getPhone();
-
         Map<Integer, String> userTelephoneMap = new HashMap();
-        List<Transfer> transferList = transferRepository.getAllTransfersByUserIdAndTelephone(id, userPhone);
+        List<Transfer> transferList = transferRepository.getAllTransfersByUserId(id);
         return transferList.stream()
                 .map(transfer -> {
                     int receiverId = transfer.getReceiverWalletId();

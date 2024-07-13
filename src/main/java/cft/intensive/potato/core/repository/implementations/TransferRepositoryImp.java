@@ -39,13 +39,11 @@ public class TransferRepositoryImp implements TransferRepository {
     }
 
     @Override
-    public List<Transfer> getAllTransfersByUserIdAndTelephone(int id, String phone) {
+    public List<Transfer> getAllTransfersByUserId(int id) {
         Query query = em.createQuery(
                         "select t from Transfer t " +
-                        "where t.senderWalletId = :id or t.receiverWalletId = :id " +
-                        "or t.receiverTelephoneNumber = :phone")
-                .setParameter("id", id)
-                .setParameter("phone", phone);
+                        "where t.senderWalletId = :id or t.receiverWalletId = :id ")
+                .setParameter("id", id);
         return (List<Transfer>) query.getResultList();
     }
 }
