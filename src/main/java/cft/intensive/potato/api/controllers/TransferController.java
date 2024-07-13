@@ -7,6 +7,7 @@ import cft.intensive.potato.core.services.transfer.TransferService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,9 +29,9 @@ public class TransferController {
         return transferService.createTransfer(transferCreateRequest);
     }
 
-    @GetMapping(path = "/{id}")
-    public List<TransferGetResponse> getAllTransfersByUserId(int id) {
+    @GetMapping(path = "/wallet_id/{id}")
+    public List<TransferGetResponse> getAllTransfersByWalletId(@PathVariable int id) {
         log.info("request arrived: get transfers by user id: {}", id);
-        return transferService.getAllByUserId(id);
+        return transferService.getAllByWalletId(id);
     }
 }

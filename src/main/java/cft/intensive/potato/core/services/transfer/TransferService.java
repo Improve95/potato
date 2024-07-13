@@ -11,5 +11,5 @@ public interface TransferService {
 
     TransferCreateResponse createTransfer(TransferCreateRequest transfer) throws NotFoundException;
 
-    List<TransferGetResponse> getAllByUserId(int id);
+    List<TransferGetResponse> getAllByWalletId(int id);
 }
