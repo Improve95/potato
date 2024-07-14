@@ -11,7 +11,7 @@ import lombok.extern.jackson.Jacksonized;
 @Getter
 @Jacksonized
 @ToString
-public class TransferCreateRequest {
+public class TransferPostRequest {
 
     private final int senderWalletId;
 

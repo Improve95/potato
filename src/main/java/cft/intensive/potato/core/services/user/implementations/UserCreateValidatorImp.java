@@ -1,6 +1,6 @@
 package cft.intensive.potato.core.services.user.implementations;
 
-import cft.intensive.potato.api.dto.user.UserCreateRequest;
+import cft.intensive.potato.api.dto.user.UserPostRequest;
 import cft.intensive.potato.core.services.user.UserCreateValidator;
 import org.springframework.stereotype.Component;
 
@@ -8,11 +8,11 @@ import org.springframework.stereotype.Component;
 public class UserCreateValidatorImp implements UserCreateValidator {
 
     @Override
-    public boolean validateUserCreateRequest(UserCreateRequest userCreateRequest) {
-        if (userCreateRequest.getFirstName().length() < 0 || userCreateRequest.getFirstName().length() > 50 ||
-            userCreateRequest.getSecondName().length() < 0 || userCreateRequest.getSecondName().length() > 50 ||
-                userCreateRequest.getTelephoneNumber().length() != 11 ||
-            userCreateRequest.getPassword().length() < 0 || userCreateRequest.getPassword().length() > 64) {
+    public boolean validateUserCreateRequest(UserPostRequest userPostRequest) {
+        if (userPostRequest.getFirstName().length() < 0 || userPostRequest.getFirstName().length() > 50 ||
+            userPostRequest.getSecondName().length() < 0 || userPostRequest.getSecondName().length() > 50 ||
+                userPostRequest.getTelephoneNumber().length() != 11 ||
+            userPostRequest.getPassword().length() < 0 || userPostRequest.getPassword().length() > 64) {
             /*другие проверки*/
             return false;
         }

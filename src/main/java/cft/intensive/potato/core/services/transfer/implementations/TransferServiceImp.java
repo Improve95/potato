@@ -1,7 +1,7 @@
 package cft.intensive.potato.core.services.transfer.implementations;
 
-import cft.intensive.potato.api.dto.transfer.TransferCreateRequest;
-import cft.intensive.potato.api.dto.transfer.TransferCreateResponse;
+import cft.intensive.potato.api.dto.transfer.TransferPostRequest;
+import cft.intensive.potato.api.dto.transfer.TransferPostResponse;
 import cft.intensive.potato.api.dto.transfer.TransferGetResponse;
 import cft.intensive.potato.core.exceptions.IncorrectRequestException;
 import cft.intensive.potato.core.exceptions.transfer.NotEnoughtMoneyException;
@@ -42,22 +42,22 @@ public class TransferServiceImp implements TransferService {
 
     @Transactional
     @Override
-    public TransferCreateResponse createTransfer(TransferCreateRequest transferCreateRequest) throws NotFoundException {
-        if (!transferValidation.validateTransferCreateRequest(transferCreateRequest)) {
+    public TransferPostResponse createTransfer(TransferPostRequest transferPostRequest) throws NotFoundException {
+        if (!transferValidation.validateTransferCreateRequest(transferPostRequest)) {
             throw new IncorrectRequestException("incorrect parameters");
         }
 
-        Wallet senderWallet = Optional.ofNullable(walletRepository.getById(transferCreateRequest.getSenderWalletId()))
+        Wallet senderWallet = Optional.ofNullable(walletRepository.getById(transferPostRequest.getSenderWalletId()))
                 .orElseThrow(() -> new NotFoundException("wallet not found by id"));
 
-        if (!transferValidation.isEnoughtMoneyForTransfer(transferCreateRequest)) {
+        if (!transferValidation.isEnoughtMoneyForTransfer(transferPostRequest)) {
             throw new NotEnoughtMoneyException("not enought money for transfer");
         }
 
         int receiverWalletId = 0;
-        switch (transferCreateRequest.getDestination()) {
+        switch (transferPostRequest.getDestination()) {
             case USER -> {
-                receiverWalletId = getReceiverWalletIdWhenUserIsDestination(transferCreateRequest);
+                receiverWalletId = getReceiverWalletIdWhenUserIsDestination(transferPostRequest);
             }
             case SERVICE -> { /*TODO
             по заданию непонятно, зачем отправлять за услугу, ведь для этого есть выставление счета,
@@ -65,23 +65,23 @@ public class TransferServiceImp implements TransferService {
         }
 
         Transfer transfer = Transfer.builder()
-                .senderWalletId(transferCreateRequest.getSenderWalletId())
-                .destination(transferCreateRequest.getDestination())
-                .userTransferWay(transferCreateRequest.getUserTransferWay())
+                .senderWalletId(transferPostRequest.getSenderWalletId())
+                .destination(transferPostRequest.getDestination())
+                .userTransferWay(transferPostRequest.getUserTransferWay())
                 .receiverWalletId(receiverWalletId)
-                .serviceId(transferCreateRequest.getServiceId())
-                .amount(transferCreateRequest.getAmount())
+                .serviceId(transferPostRequest.getServiceId())
+                .amount(transferPostRequest.getAmount())
                 .status(false)
                 .date(LocalDateTime.parse(LocalDateTime.now().format( DateTimeFormatter.ISO_DATE_TIME )))
                 .build();
 
         transferRepository.addTransfer(transfer);
 
-        changeWalletsAmount(senderWallet, receiverWalletId, transferCreateRequest.getAmount());
+        changeWalletsAmount(senderWallet, receiverWalletId, transferPostRequest.getAmount());
 
         transferRepository.changeTransferStatus(transfer.getId(), true);
 
-        return TransferCreateResponse.builder()
+        return TransferPostResponse.builder()
                 .transferId(transfer.getId())
                 .status(transfer.getStatus())
                 .date(transfer.getDate())
@@ -94,13 +94,13 @@ public class TransferServiceImp implements TransferService {
         walletRepository.addAmountOnBalance(receiverWalletId, amountDiff);
     }
 
-    private int getReceiverWalletIdWhenUserIsDestination(TransferCreateRequest transferCreateRequest) {
+    private int getReceiverWalletIdWhenUserIsDestination(TransferPostRequest transferPostRequest) {
         User receiverUser;
-        if (transferCreateRequest.getUserTransferWay() == UserTransferWay.BY_TELEPHONE) {
-            receiverUser = Optional.ofNullable(usersRepository.getByTelephone(transferCreateRequest.getReceiverPhone()))
+        if (transferPostRequest.getUserTransferWay() == UserTransferWay.BY_TELEPHONE) {
+            receiverUser = Optional.ofNullable(usersRepository.getByTelephone(transferPostRequest.getReceiverPhone()))
                     .orElseThrow(() -> new NotFoundException("user not found by phone"));
         } else {
-            receiverUser = Optional.ofNullable(usersRepository.getById(transferCreateRequest.getReceiverWalletId()))
+            receiverUser = Optional.ofNullable(usersRepository.getById(transferPostRequest.getReceiverWalletId()))
                     .orElseThrow(() -> new NotFoundException("user not found by wallet id"));
         }
         return receiverUser.getWallet().getId();

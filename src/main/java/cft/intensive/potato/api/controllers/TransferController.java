@@ -1,7 +1,7 @@
 package cft.intensive.potato.api.controllers;
 
-import cft.intensive.potato.api.dto.transfer.TransferCreateRequest;
-import cft.intensive.potato.api.dto.transfer.TransferCreateResponse;
+import cft.intensive.potato.api.dto.transfer.TransferPostRequest;
+import cft.intensive.potato.api.dto.transfer.TransferPostResponse;
 import cft.intensive.potato.api.dto.transfer.TransferGetResponse;
 import cft.intensive.potato.core.services.transfer.TransferService;
 import cft.intensive.potato.model.transfer.TransferType;
@@ -19,16 +19,16 @@ import java.util.List;
 
 @RestController
 @RequestMapping ("/transfer")
-@Slf4j
 @RequiredArgsConstructor
+@Slf4j
 public class TransferController {
 
     private final TransferService transferService;
 
     @PostMapping
-    public TransferCreateResponse createTransfer(@RequestBody TransferCreateRequest transferCreateRequest) {
-        log.info("request arrived: " + transferCreateRequest.toString());
-        return transferService.createTransfer(transferCreateRequest);
+    public TransferPostResponse createTransfer(@RequestBody TransferPostRequest transferPostRequest) {
+        log.info("request arrived: " + transferPostRequest.toString());
+        return transferService.createTransfer(transferPostRequest);
     }
 
     @GetMapping(path = "/{transferId}/wallet/{walletId}")

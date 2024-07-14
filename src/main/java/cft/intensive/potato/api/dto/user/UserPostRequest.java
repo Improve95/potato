@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @ToString
 @Jacksonized
-public class UserCreateRequest {
+public class UserPostRequest {
 
     private final String firstName;
 

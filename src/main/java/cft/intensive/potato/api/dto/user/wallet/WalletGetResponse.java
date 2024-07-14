@@ -1,4 +1,4 @@
-package cft.intensive.potato.api.dto.wallet;
+package cft.intensive.potato.api.dto.user.wallet;
 
 import lombok.Builder;
 import lombok.Getter;

@@ -9,7 +9,7 @@ import lombok.extern.jackson.Jacksonized;
 @Getter
 @Jacksonized
 @ToString
-public class UserCreateResponse {
+public class UserPostResponse {
 
     private final int id;
 }
