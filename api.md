@@ -229,7 +229,7 @@ Http status code : 400:
 }
 ```
 
-DELETE /payments/{paymentId}/user/{creatorId} - отмена счета с номером {paymentId} пользователем {creatorId} создавшим его
+DELETE /payments/{paymentId}/users/{creatorId} - отмена счета с номером {paymentId} пользователем {creatorId} создавшим его
 
 Body
 ```
@@ -257,7 +257,8 @@ Http status code: 404:
 }
 ```
 
-GET /payments/{userId} - получение выставленных счетов пользователем {userId}
+GET /payments/bill/users/{userId} - получение выставленных счетов пользователем {userId}
+GET /payments/unpaid/users/{userId} - получение счетов, которые необходимо оплатить пользователю {userId}
 
 Response
 
@@ -265,13 +266,13 @@ Http status code: 200:
 ```
 [
 {
-    "paymentOperationId": "number"
-    "paymentAmount: "number"
-    "paymentCreatorId": "number"
+    "paymentId": "number"
+    "amount: "number"
+    "creatorId": "number"
     "payerId": "number"
-    "comment": "message"
-    "createPaymentDate": "string"
-    "paymentStatus": "number"
+    "comment": "string"
+    "date": "localdatetime"
+    "status": "string"
 }
 ]
 ```
@@ -296,30 +297,6 @@ Http status code: 200:
     "createPaymentDate": "string"
     "paymentStatus": "number"
 }
-```
-
-Http status code: 404:
-```
-{}
-```
-
-GET /payments/{userId} - получение счетов, которые необходимо оплатить пользователю {userId}
-
-Response
-
-Http status code: 200: 
-```
-[
-{
-    "paymentOperationId": "number"
-    "paymentAmount: "number"
-    "paymentCreatorId": "number"
-    "payerId": "number"
-    "comment": "message"
-    "createPaymentDate": "number"
-    "paymentStatus": "number"
-}
-]
 ```
 
 Http status code: 404:

@@ -1,5 +1,6 @@
 package cft.intensive.potato.core.services.payment.implementations;
 
+import cft.intensive.potato.api.dto.payment.PaymentGetResponse;
 import cft.intensive.potato.api.dto.payment.PaymentPostRequest;
 import cft.intensive.potato.api.dto.payment.PaymentPostResponse;
 import cft.intensive.potato.core.exceptions.NoAccessException;
@@ -63,5 +64,10 @@ public class PaymentServiceImp implements PaymentService {
         }
 
         payment.setStatus(PaymentStatus.CANCELED);
+    }
+
+    @Override
+    public PaymentGetResponse getBillPaymentsByUserId(int userId) {
+        return null;
     }
 }

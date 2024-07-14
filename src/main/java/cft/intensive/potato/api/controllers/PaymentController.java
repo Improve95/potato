@@ -1,11 +1,13 @@
 package cft.intensive.potato.api.controllers;
 
+import cft.intensive.potato.api.dto.payment.PaymentGetResponse;
 import cft.intensive.potato.api.dto.payment.PaymentPostRequest;
 import cft.intensive.potato.api.dto.payment.PaymentPostResponse;
 import cft.intensive.potato.core.services.payment.PaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,9 +30,15 @@ public class PaymentController {
         return paymentService.createNewPayment(paymentPostRequest);
     }
 
-    @DeleteMapping("/{paymentId}/user/{creatorId}")
+    @DeleteMapping("/{paymentId}/users/{creatorId}")
     public void deletePayment(@PathVariable UUID paymentId, @PathVariable int creatorId) {
         log.info("request arrived: delete payment with id {} by user {}", paymentId, creatorId);
         paymentService.deletePayment(paymentId, creatorId);
+    }
+
+    @GetMapping("/bill/users/{userId}")
+    public PaymentGetResponse getBillPaymentsByUserId(@PathVariable int userId) {
+        log.info("request arrived: get bill payments by user id {}", userId);
+        return paymentService.getBillPaymentsByUserId(userId);
     }
 }
