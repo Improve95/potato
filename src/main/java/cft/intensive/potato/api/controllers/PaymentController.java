@@ -23,4 +23,7 @@ public class PaymentController {
         log.info("request arrived: create new payment: {}", paymentPostRequest);
         return paymentService.createNewPayment(paymentPostRequest);
     }
+
+//    @DeleteMapping
+//    public
 }

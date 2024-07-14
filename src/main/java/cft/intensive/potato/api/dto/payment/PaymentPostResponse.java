@@ -6,15 +6,16 @@ import lombok.Getter;
 import lombok.extern.jackson.Jacksonized;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Builder
 @Getter
 @Jacksonized
 public class PaymentPostResponse {
 
-    private final char[] paymentId;
-
-    private final LocalDateTime date;
+    private final UUID paymentId;
 
     private final PaymentStatus status;
+
+    private final LocalDateTime date;
 }

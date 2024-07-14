@@ -5,23 +5,24 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Builder
 @Getter
-@RequiredArgsConstructor
+@AllArgsConstructor
+@Table(name = "payments")
 public class Payment {
 
     @Id
-    @UuidGenerator(style = UuidGenerator.Style.AUTO)
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "uuid_generator")
-    private byte[] uuid = new byte[128];
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID uuid;
 
     private int amount;
 
@@ -36,4 +37,6 @@ public class Payment {
     private PaymentStatus status;
 
     private LocalDateTime date;
+
+    public Payment() {}
 }
