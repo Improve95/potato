@@ -6,5 +6,9 @@ import java.util.UUID;
 
 public interface PaymentRepository {
 
+    Payment getById(UUID paymentId);
+
     UUID addNewPayment(Payment payment);
+
+//    void changePaymentStatus(PaymentStatus paymentStatus);
 }

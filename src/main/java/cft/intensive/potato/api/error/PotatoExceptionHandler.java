@@ -1,6 +1,7 @@
 package cft.intensive.potato.api.error;
 
 import cft.intensive.potato.core.exceptions.IncorrectRequestException;
+import cft.intensive.potato.core.exceptions.NoAccessException;
 import cft.intensive.potato.core.exceptions.transfer.NotEnoughtMoneyException;
 import cft.intensive.potato.core.exceptions.transfer.NotFoundException;
 import cft.intensive.potato.core.exceptions.user.UserAlreadyExistException;
@@ -34,6 +35,10 @@ public class PotatoExceptionHandler {
 
         if (exception instanceof NotEnoughtMoneyException) {
             return HttpStatus.METHOD_NOT_ALLOWED;
+        }
+
+        if (exception instanceof NoAccessException) {
+            return HttpStatus.FORBIDDEN;
         }
 
         return HttpStatus.SERVICE_UNAVAILABLE;

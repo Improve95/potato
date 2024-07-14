@@ -2,6 +2,7 @@ package cft.intensive.potato.core.services.payment.implementations;
 
 import cft.intensive.potato.api.dto.payment.PaymentPostRequest;
 import cft.intensive.potato.api.dto.payment.PaymentPostResponse;
+import cft.intensive.potato.core.exceptions.NoAccessException;
 import cft.intensive.potato.core.exceptions.transfer.NotFoundException;
 import cft.intensive.potato.core.repository.PaymentRepository;
 import cft.intensive.potato.core.repository.UsersRepository;
@@ -14,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -34,6 +37,7 @@ public class PaymentServiceImp implements PaymentService {
         Payment newPayment = Payment.builder()
                 .creatorId(paymentPostRequest.getCreatorId())
                 .payerId(paymentPostRequest.getPayerId())
+                .amount(paymentPostRequest.getAmount())
                 .comment(paymentPostRequest.getComment())
                 .status(PaymentStatus.UNPAID)
                 .date(LocalDateTime.now())
@@ -46,5 +50,18 @@ public class PaymentServiceImp implements PaymentService {
                 .status(newPayment.getStatus())
                 .date(newPayment.getDate())
                 .build();
+    }
+
+    @Transactional
+    @Override
+    public void deletePayment(UUID paymentId, int userId) {
+        Payment payment = Optional.ofNullable(paymentRepository.getById(paymentId))
+                .orElseThrow(() -> new NotFoundException("payment not found by id"));
+
+        if (payment.getCreatorId() != userId) {
+            throw new NoAccessException("you cannot delete this payment");
+        }
+
+        payment.setStatus(PaymentStatus.CANCELED);
     }
 }
