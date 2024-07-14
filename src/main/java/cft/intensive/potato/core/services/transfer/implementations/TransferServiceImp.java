@@ -2,6 +2,7 @@ package cft.intensive.potato.core.services.transfer.implementations;
 
 import cft.intensive.potato.api.dto.transfer.TransferCreateRequest;
 import cft.intensive.potato.api.dto.transfer.TransferCreateResponse;
+import cft.intensive.potato.api.dto.transfer.TransferGetResponse;
 import cft.intensive.potato.core.exceptions.IncorrectRequestException;
 import cft.intensive.potato.core.exceptions.transfer.NotEnoughtMoneyException;
 import cft.intensive.potato.core.exceptions.transfer.NotFoundException;
@@ -10,8 +11,11 @@ import cft.intensive.potato.core.repository.UsersRepository;
 import cft.intensive.potato.core.repository.WalletRepository;
 import cft.intensive.potato.core.services.transfer.TransferService;
 import cft.intensive.potato.core.services.transfer.TransferValidation;
+import cft.intensive.potato.model.User;
 import cft.intensive.potato.model.Wallet;
 import cft.intensive.potato.model.transfer.Transfer;
+import cft.intensive.potato.model.transfer.TransferType;
+import cft.intensive.potato.model.transfer.UserTransferWay;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,8 +23,11 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -37,30 +44,31 @@ public class TransferServiceImp implements TransferService {
     @Override
     public TransferCreateResponse createTransfer(TransferCreateRequest transferCreateRequest) throws NotFoundException {
         if (!transferValidation.validateTransferCreateRequest(transferCreateRequest)) {
-            throw new IncorrectRequestException("incorrect parameters", 400);
+            throw new IncorrectRequestException("incorrect parameters");
         }
 
         Wallet senderWallet = Optional.ofNullable(walletRepository.getById(transferCreateRequest.getSenderWalletId()))
-                .orElseThrow(() -> new NotFoundException("wallet not found", 404));
+                .orElseThrow(() -> new NotFoundException("wallet not found by id"));
 
         if (!transferValidation.isEnoughtMoneyForTransfer(transferCreateRequest)) {
-            throw new NotEnoughtMoneyException("not enought money for transfer", 405);
+            throw new NotEnoughtMoneyException("not enought money for transfer");
         }
 
         int receiverWalletId = 0;
         switch (transferCreateRequest.getDestination()) {
             case USER -> {
-                receiverWalletId = getReceiverWalletIdWhenUserDestination(transferCreateRequest);
+                receiverWalletId = getReceiverWalletIdWhenUserIsDestination(transferCreateRequest);
             }
-            case SERVICE -> { /*TODO (in new life)*/ }
+            case SERVICE -> { /*TODO
+            по заданию непонятно, зачем отправлять за услугу, ведь для этого есть выставление счета,
+            а непосредственно выставление услуг не было)*/ }
         }
 
         Transfer transfer = Transfer.builder()
                 .senderWalletId(transferCreateRequest.getSenderWalletId())
                 .destination(transferCreateRequest.getDestination())
                 .userTransferWay(transferCreateRequest.getUserTransferWay())
-                .receiverWalletId(transferCreateRequest.getSenderWalletId())
-                .receiverTelephoneNumber(transferCreateRequest.getReceiverTelephoneNumber())
+                .receiverWalletId(receiverWalletId)
                 .serviceId(transferCreateRequest.getServiceId())
                 .amount(transferCreateRequest.getAmount())
                 .status(false)
@@ -86,39 +94,108 @@ public class TransferServiceImp implements TransferService {
         walletRepository.addAmountOnBalance(receiverWalletId, amountDiff);
     }
 
-    private int getReceiverWalletIdWhenUserDestination(TransferCreateRequest transferCreateRequest) {
-        int receiverWalletId = 0;
-        switch (transferCreateRequest.getUserTransferWay()) {
-            case BY_ID -> {
-                receiverWalletId = transferWayByIdHandler(transferCreateRequest);
-            }
-            case BY_TELEPHONE -> {
-                receiverWalletId = transferWayByTelephone(transferCreateRequest);
-            }
+    private int getReceiverWalletIdWhenUserIsDestination(TransferCreateRequest transferCreateRequest) {
+        User receiverUser;
+        if (transferCreateRequest.getUserTransferWay() == UserTransferWay.BY_TELEPHONE) {
+            receiverUser = Optional.ofNullable(usersRepository.getByTelephone(transferCreateRequest.getReceiverPhone()))
+                    .orElseThrow(() -> new NotFoundException("user not found by phone"));
+        } else {
+            receiverUser = Optional.ofNullable(usersRepository.getById(transferCreateRequest.getReceiverWalletId()))
+                    .orElseThrow(() -> new NotFoundException("user not found by wallet id"));
         }
-        return receiverWalletId;
+        return receiverUser.getWallet().getId();
     }
-
-    private int transferWayByIdHandler(TransferCreateRequest transferCreateRequest) {
-        if (!walletRepository.walletIsExist(transferCreateRequest.getReceiverWalletId())) {
-            throw new NotEnoughtMoneyException("not found receiver wallet", 404);
-        }
-        return transferCreateRequest.getReceiverWalletId();
-    }
-
-    private int transferWayByTelephone(TransferCreateRequest transferCreateRequest) {
-        if (!usersRepository.userIsExist(transferCreateRequest.getReceiverTelephoneNumber())) {
-            throw new NotEnoughtMoneyException("not found receiver wallet", 404);
-        }
-        return usersRepository.getByTelephone(transferCreateRequest.getReceiverTelephoneNumber())
-                .getWallet().getId();
-    }
-
-    private void ServiceDestinationHandler(TransferCreateRequest transferCreateRequest) { /*TODO (in new life)*/ }
 
     @Override
-    public List<Transfer> getById() {
-        //TODO
-        return null;
+    public TransferGetResponse getTransferById(int transferId, int walletId) {
+        Transfer transfer = Optional.ofNullable(transferRepository.getById(transferId))
+                .orElseThrow(() -> new NotFoundException("transfer not found by id"));
+
+        if (transfer.getSenderWalletId() != walletId && transfer.getReceiverWalletId() != walletId) {
+            throw new IncorrectRequestException("incorrect wallet id");
+        }
+
+        TransferGetResponseMapper transferGetResponseMapper = new TransferGetResponseMapper(usersRepository);
+        return transferGetResponseMapper.mapTransferGetResponse(transfer, walletId);
+    }
+
+    @Override
+    public List<TransferGetResponse> getAllTransfersByWalletId(int walletId) {
+        List<Transfer> transferList = transferRepository.getAllTransfersByWalletId(walletId);
+        TransferGetResponseMapper transferGetResponseMapper = new TransferGetResponseMapper(usersRepository);
+        return transferList.stream()
+                .map(transfer -> transferGetResponseMapper.mapTransferGetResponse(transfer, walletId))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<TransferGetResponse> getAllTransfersByWalletIdAndParameters(int walletId,
+                                                                            TransferType transferType,
+                                                                            Boolean transferStatus) {
+        if (transferType == null && transferStatus == null) {
+            return getAllTransfersByWalletId(walletId);
+        }
+
+        List<Transfer> transferList = transferRepository.getAllTransfersByWalletId(walletId);
+        TransferGetResponseMapper transferGetResponseMapper = new TransferGetResponseMapper(usersRepository);
+
+        /*вот эту грязь неплохо было бы переделать на function и красивые конструкции*/
+        List<TransferGetResponse> transferGetResponseList;
+        if (transferType == null) {
+            log.info(String.format("%b", transferStatus.booleanValue()));
+            transferGetResponseList = transferList.stream()
+                    .filter(transfer -> transfer.getStatus() == transferStatus.booleanValue())
+                    .map(transfer -> transferGetResponseMapper.mapTransferGetResponse(transfer, walletId))
+                    .collect(Collectors.toList());
+        } else if (transferStatus == null) {
+            transferGetResponseList = transferList.stream()
+                    .map(transfer -> transferGetResponseMapper.mapTransferGetResponse(transfer, walletId))
+                    .filter(transferGetResponse -> transferGetResponse.getTransferType() == transferType)
+                    .collect(Collectors.toList());
+        } else {
+            transferGetResponseList = transferList.stream()
+                    .map(transfer -> transferGetResponseMapper.mapTransferGetResponse(transfer, walletId))
+                    .filter(transferGetResponse -> transferGetResponse.getTransferType() == transferType &&
+                                transferGetResponse.getStatus() == transferStatus.booleanValue()
+                    ).collect(Collectors.toList());
+        }
+        return transferGetResponseList;
+    }
+}
+
+class TransferGetResponseMapper {
+
+    private Map<Integer, Integer> walletIdAndUserId = new HashMap<>();
+    private UsersRepository usersRepository;
+
+    TransferGetResponseMapper(UsersRepository usersRepository) {
+        this.usersRepository = usersRepository;
+    }
+
+    public TransferGetResponse mapTransferGetResponse(Transfer transfer, int walletId) {
+        TransferType transferType = TransferType.SEND;
+        int secondSideWalletId = transfer.getReceiverWalletId();
+
+        if (transfer.getReceiverWalletId() == walletId) {
+            transferType = TransferType.RECEIVE;
+            secondSideWalletId = transfer.getSenderWalletId();
+        }
+
+        int secondSideUserId;
+        try {
+            secondSideUserId = walletIdAndUserId.get(secondSideWalletId);
+        } catch (NullPointerException ex) {
+            secondSideUserId = usersRepository.getByWalletId(secondSideWalletId).getId();
+        }
+
+        return TransferGetResponse.builder()
+                .id(transfer.getId())
+                .transferType(transferType)
+                .secondSideUserId(secondSideUserId)
+                .secondSideWalletId(secondSideWalletId)
+                .amount(transfer.getAmount())
+                .status(transfer.getStatus())
+                .date(transfer.getDate())
+                .build();
     }
 }

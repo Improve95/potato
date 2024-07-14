@@ -22,7 +22,7 @@ public class WalletServiceImp implements WalletService {
     public WalletGetResponse getById(int id) {
 
         Wallet wallet = Optional.ofNullable(walletRepository.getById(id))
-                .orElseThrow(() -> new NotFoundException("wallet not found", 404));
+                .orElseThrow(() -> new NotFoundException("wallet not found"));
 
         return WalletGetResponse.builder()
                 .id(wallet.getId())

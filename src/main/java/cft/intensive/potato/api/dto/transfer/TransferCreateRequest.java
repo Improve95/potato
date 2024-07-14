@@ -21,7 +21,7 @@ public class TransferCreateRequest {
 
     private final int receiverWalletId;
 
-    private final String receiverTelephoneNumber;
+    private final String receiverPhone;
 
     private final int serviceId;
 

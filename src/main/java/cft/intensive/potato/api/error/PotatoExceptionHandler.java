@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 public class PotatoExceptionHandler {
 
-    /*TODO: добавить throwable... (что это такое?)*/
-
     @org.springframework.web.bind.annotation.ExceptionHandler
     ResponseEntity<Error> handle(Exception exception) {
         return ResponseEntity.status(getHttpStatus(exception))

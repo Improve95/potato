@@ -35,10 +35,10 @@ public class UserServiceImp implements UserService {
     @Override
     public UserCreateResponse createUser(UserCreateRequest userCreateRequest) {
         if (!userCreateValidator.validateUserCreateRequest(userCreateRequest)) {
-            throw new IncorrectRequestException(403);
+            throw new IncorrectRequestException();
         }
         if (usersRepository.userIsExist(userCreateRequest.getTelephoneNumber())) {
-            throw new UserAlreadyExistException(409);
+            throw new UserAlreadyExistException();
         }
 
         User newUser = new User();
@@ -62,12 +62,12 @@ public class UserServiceImp implements UserService {
     @Override
     public UserGetResponse getById(int id) {
         User user = Optional.ofNullable(usersRepository.getById(id))
-                .orElseThrow(() -> new NotFoundException("user not found by id", 404));
+                .orElseThrow(() -> new NotFoundException("user not found by id"));
 
         return UserGetResponse.builder()
                 .firstName(user.getFirstName())
                 .secondName(user.getSecondName())
-                .telephoneNumber(user.getTelephoneNumber())
+                .telephoneNumber(user.getPhone())
                 .email(user.getEmail())
                 .birthdate(user.getBirthdate())
                 .build();
@@ -79,7 +79,7 @@ public class UserServiceImp implements UserService {
         User patchUser = usersRepository.getById(id);
 
         if (patchUser == null) {
-            throw new NotFoundException("user not found", 404);
+            throw new NotFoundException("user not found");
         }
 
         userPatchMapper.updateUserFromDto(userPatchRequest, patchUser);

@@ -2,15 +2,11 @@ package cft.intensive.potato.core.exceptions.transfer;
 
 public class NotEnoughtMoneyException extends RuntimeException {
 
-    private final int code;
-
-    public NotEnoughtMoneyException(int code) {
+    public NotEnoughtMoneyException() {
         super("not enought money");
-        this.code = code;
     }
 
-    public NotEnoughtMoneyException(String message, int code) {
+    public NotEnoughtMoneyException(String message) {
         super(message);
-        this.code = code;
     }
 }

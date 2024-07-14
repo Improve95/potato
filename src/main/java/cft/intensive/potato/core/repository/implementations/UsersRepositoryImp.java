@@ -40,8 +40,19 @@ public class UsersRepositoryImp implements UsersRepository {
 
     @Override
     public User getByTelephone(String telephoneNumber) {
-        Query query = em.createQuery("SELECT u FROM User u WHERE u.telephoneNumber = :phone")
+        Query query = em.createQuery("SELECT u FROM User u WHERE u.phone = :phone")
                 .setParameter("phone", telephoneNumber);
+
+        List<User> usersList = query.getResultList();
+
+        if (usersList.size() == 0) return null;
+        return usersList.get(0);
+    }
+
+    @Override
+    public User getByWalletId(int id) {
+        Query query = em.createQuery("select u from User u where u.wallet.id = :id")
+                .setParameter("id", id);
 
         List<User> usersList = query.getResultList();
 

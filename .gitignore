@@ -82,6 +82,7 @@ CMakeSettings.json
 **out
 *.md
 **target
+justFiles
 
 # Compiled class file
 *.class
