@@ -30,12 +30,12 @@ public class TransferController {
     }
 
     @GetMapping(path = "/{transferId}/wallet/{walletId}")
-    public TransferGetResponse getTransferById(@PathVariable int transferId, int walletId) {
+    public TransferGetResponse getTransferById(@PathVariable int transferId, @PathVariable int walletId) {
         log.info("request arrived: get transfer by id: {}", transferId);
         return transferService.getTransferById(transferId, walletId);
     }
 
-    @GetMapping(path = "/wallet_id/{id}")
+    @GetMapping(path = "/wallet/{id}")
     public List<TransferGetResponse> getAllTransfersByWalletId(@PathVariable int id) {
         log.info("request arrived: get transfers by wallet id: {}", id);
         return transferService.getAllByWalletId(id);

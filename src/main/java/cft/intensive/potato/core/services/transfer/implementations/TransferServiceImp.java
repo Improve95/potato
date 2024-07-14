@@ -111,7 +111,7 @@ public class TransferServiceImp implements TransferService {
         Transfer transfer = Optional.ofNullable(transferRepository.getById(transferId))
                 .orElseThrow(() -> new NotFoundException("transfer not found by id"));
 
-        if (transfer.getSenderWalletId() != walletId || transfer.getReceiverWalletId() != walletId) {
+        if (transfer.getSenderWalletId() != walletId && transfer.getReceiverWalletId() != walletId) {
             throw new IncorrectRequestException("incorrect wallet id");
         }
 
