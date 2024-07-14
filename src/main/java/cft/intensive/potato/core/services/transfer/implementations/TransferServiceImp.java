@@ -44,7 +44,7 @@ public class TransferServiceImp implements TransferService {
     @Override
     public TransferCreateResponse createTransfer(TransferCreateRequest transferCreateRequest) throws NotFoundException {
         if (!transferValidation.validateTransferCreateRequest(transferCreateRequest)) {
-            throw new IncorrectRequestException("incorrect parameters", 400);
+            throw new IncorrectRequestException("incorrect parameters");
         }
 
         Wallet senderWallet = Optional.ofNullable(walletRepository.getById(transferCreateRequest.getSenderWalletId()))
@@ -107,38 +107,61 @@ public class TransferServiceImp implements TransferService {
     }
 
     @Override
-    public List<TransferGetResponse> getAllByWalletId(int id) {
-        /*User user = Optional.ofNullable(usersRepository.getById(id))
-                .orElseThrow(() -> new NotFoundException("user not found by id"));*/
+    public TransferGetResponse getTransferById(int transferId, int walletId) {
+        Transfer transfer = Optional.ofNullable(transferRepository.getById(transferId))
+                .orElseThrow(() -> new NotFoundException("transfer not found by id"));
 
-        Map<Integer, Integer> walletIdAndUserId = new HashMap<>();
-        List<Transfer> transferList = transferRepository.getAllTransfersByUserId(id);
+        if (transfer.getSenderWalletId() != walletId || transfer.getReceiverWalletId() != walletId) {
+            throw new IncorrectRequestException("incorrect wallet id");
+        }
+
+        TransferGetResponseMapper transferGetResponseMapper = new TransferGetResponseMapper(usersRepository);
+        return transferGetResponseMapper.mapTransferGetResponse(transfer, walletId);
+    }
+
+    @Override
+    public List<TransferGetResponse> getAllByWalletId(int walletId) {
+        TransferGetResponseMapper transferGetResponseMapper = new TransferGetResponseMapper(usersRepository);
+        List<Transfer> transferList = transferRepository.getAllTransfersByUserId(walletId);
         return transferList.stream()
-                .map(transfer -> {
-                    TransferType transferType = TransferType.SEND;
-                    int secondSideWalletId = transfer.getReceiverWalletId();
+                .map(transfer -> transferGetResponseMapper.mapTransferGetResponse(transfer, walletId))
+                .collect(Collectors.toList());
+    }
+}
 
-                    if (transfer.getReceiverWalletId() == id) {
-                        transferType = TransferType.RECEIVE;
-                        secondSideWalletId = transfer.getSenderWalletId();
-                    }
+class TransferGetResponseMapper {
 
-                    int secondSideUserId;
-                    try {
-                        secondSideUserId = walletIdAndUserId.get(secondSideWalletId);
-                    } catch (NullPointerException ex) {
-                        secondSideUserId = usersRepository.getByWalletId(secondSideWalletId).getId();
-                    }
+    private Map<Integer, Integer> walletIdAndUserId = new HashMap<>();
+    private UsersRepository usersRepository;
 
-                    return TransferGetResponse.builder()
-                            .id(transfer.getId())
-                            .transferType(transferType)
-                            .secondSideUserId(secondSideUserId)
-                            .secondSideWalletId(secondSideWalletId)
-                            .amount(transfer.getAmount())
-                            .status(transfer.getStatus())
-                            .date(transfer.getDate())
-                            .build();
-                }).collect(Collectors.toList());
+    TransferGetResponseMapper(UsersRepository usersRepository) {
+        this.usersRepository = usersRepository;
+    }
+
+    public TransferGetResponse mapTransferGetResponse(Transfer transfer, int walletId) {
+        TransferType transferType = TransferType.SEND;
+        int secondSideWalletId = transfer.getReceiverWalletId();
+
+        if (transfer.getReceiverWalletId() == walletId) {
+            transferType = TransferType.RECEIVE;
+            secondSideWalletId = transfer.getSenderWalletId();
+        }
+
+        int secondSideUserId;
+        try {
+            secondSideUserId = walletIdAndUserId.get(secondSideWalletId);
+        } catch (NullPointerException ex) {
+            secondSideUserId = usersRepository.getByWalletId(secondSideWalletId).getId();
+        }
+
+        return TransferGetResponse.builder()
+                .id(transfer.getId())
+                .transferType(transferType)
+                .secondSideUserId(secondSideUserId)
+                .secondSideWalletId(secondSideWalletId)
+                .amount(transfer.getAmount())
+                .status(transfer.getStatus())
+                .date(transfer.getDate())
+                .build();
     }
 }
