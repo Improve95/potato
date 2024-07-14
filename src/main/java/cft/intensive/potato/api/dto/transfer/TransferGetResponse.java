@@ -27,4 +27,8 @@ public class TransferGetResponse {
     private final boolean status;
 
     private final LocalDateTime date;
+
+    public boolean getStatus() {
+        return this.status;
+    }
 }

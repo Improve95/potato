@@ -4,6 +4,7 @@ import cft.intensive.potato.api.dto.transfer.TransferCreateRequest;
 import cft.intensive.potato.api.dto.transfer.TransferCreateResponse;
 import cft.intensive.potato.api.dto.transfer.TransferGetResponse;
 import cft.intensive.potato.core.services.transfer.TransferService;
+import cft.intensive.potato.model.transfer.TransferType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -35,9 +37,17 @@ public class TransferController {
         return transferService.getTransferById(transferId, walletId);
     }
 
-    @GetMapping(path = "/wallet/{id}")
-    public List<TransferGetResponse> getAllTransfersByWalletId(@PathVariable int id) {
-        log.info("request arrived: get transfers by wallet id: {}", id);
-        return transferService.getAllByWalletId(id);
+    @GetMapping(path = "/wallet/{walletId}")
+    public List<TransferGetResponse> getAllTransfersByWalletId(@PathVariable int walletId) {
+        log.info("request arrived: get transfers by wallet id: {}", walletId);
+        return transferService.getAllTransfersByWalletId(walletId);
+    }
+
+    @GetMapping(path = "/wallet/{walletId}/parameters")
+    public List<TransferGetResponse> getAllTransfersByWalletIdAndParameters(@PathVariable int walletId,
+                                                                            @RequestParam(required = false) TransferType transferType,
+                                                                            @RequestParam(required = false) Boolean transferStatus) {
+        log.info("request arrived: get transfers by wallet id {} and parameters {}, {}", walletId, transferType, transferStatus);
+        return transferService.getAllTransfersByWalletIdAndParameters(walletId, transferType, transferStatus);
     }
 }

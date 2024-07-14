@@ -120,12 +120,46 @@ public class TransferServiceImp implements TransferService {
     }
 
     @Override
-    public List<TransferGetResponse> getAllByWalletId(int walletId) {
+    public List<TransferGetResponse> getAllTransfersByWalletId(int walletId) {
+        List<Transfer> transferList = transferRepository.getAllTransfersByWalletId(walletId);
         TransferGetResponseMapper transferGetResponseMapper = new TransferGetResponseMapper(usersRepository);
-        List<Transfer> transferList = transferRepository.getAllTransfersByUserId(walletId);
         return transferList.stream()
                 .map(transfer -> transferGetResponseMapper.mapTransferGetResponse(transfer, walletId))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<TransferGetResponse> getAllTransfersByWalletIdAndParameters(int walletId,
+                                                                            TransferType transferType,
+                                                                            Boolean transferStatus) {
+        if (transferType == null && transferStatus == null) {
+            return getAllTransfersByWalletId(walletId);
+        }
+
+        List<Transfer> transferList = transferRepository.getAllTransfersByWalletId(walletId);
+        TransferGetResponseMapper transferGetResponseMapper = new TransferGetResponseMapper(usersRepository);
+
+        /*вот эту грязь неплохо было бы переделать на function и красивые конструкции*/
+        List<TransferGetResponse> transferGetResponseList;
+        if (transferType == null) {
+            log.info(String.format("%b", transferStatus.booleanValue()));
+            transferGetResponseList = transferList.stream()
+                    .filter(transfer -> transfer.getStatus() == transferStatus.booleanValue())
+                    .map(transfer -> transferGetResponseMapper.mapTransferGetResponse(transfer, walletId))
+                    .collect(Collectors.toList());
+        } else if (transferStatus == null) {
+            transferGetResponseList = transferList.stream()
+                    .map(transfer -> transferGetResponseMapper.mapTransferGetResponse(transfer, walletId))
+                    .filter(transferGetResponse -> transferGetResponse.getTransferType() == transferType)
+                    .collect(Collectors.toList());
+        } else {
+            transferGetResponseList = transferList.stream()
+                    .map(transfer -> transferGetResponseMapper.mapTransferGetResponse(transfer, walletId))
+                    .filter(transferGetResponse -> transferGetResponse.getTransferType() == transferType &&
+                                transferGetResponse.getStatus() == transferStatus.booleanValue()
+                    ).collect(Collectors.toList());
+        }
+        return transferGetResponseList;
     }
 }
 

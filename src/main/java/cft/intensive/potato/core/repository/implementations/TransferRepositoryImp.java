@@ -39,7 +39,7 @@ public class TransferRepositoryImp implements TransferRepository {
     }
 
     @Override
-    public List<Transfer> getAllTransfersByUserId(int id) {
+    public List<Transfer> getAllTransfersByWalletId(int id) {
         Query query = em.createQuery(
                         "select t from Transfer t " +
                         "where t.senderWalletId = :id or t.receiverWalletId = :id ")

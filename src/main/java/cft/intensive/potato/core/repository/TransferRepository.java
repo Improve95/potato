@@ -14,5 +14,5 @@ public interface TransferRepository {
 
     void changeTransferStatus(int id, boolean status);
 
-    List<Transfer> getAllTransfersByUserId(int id);
+    List<Transfer> getAllTransfersByWalletId(int id);
 }
