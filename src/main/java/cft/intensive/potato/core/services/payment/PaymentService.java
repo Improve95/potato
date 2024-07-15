@@ -4,6 +4,7 @@ import cft.intensive.potato.api.dto.payment.PaymentGetResponse;
 import cft.intensive.potato.api.dto.payment.PaymentPostRequest;
 import cft.intensive.potato.api.dto.payment.PaymentPostResponse;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface PaymentService {
@@ -12,5 +13,7 @@ public interface PaymentService {
 
     void deletePayment(UUID paymentId, int userId);
 
-    PaymentGetResponse getBillPaymentsByUserId(int userId);
+    List<PaymentGetResponse> getBillPaymentsForUserByUserId(int userId);
+
+    List<PaymentGetResponse> getUnpaidPaymentsForUserByUserID(int userId);
 }

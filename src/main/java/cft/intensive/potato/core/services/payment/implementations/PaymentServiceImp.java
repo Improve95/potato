@@ -16,8 +16,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -67,7 +69,45 @@ public class PaymentServiceImp implements PaymentService {
     }
 
     @Override
-    public PaymentGetResponse getBillPaymentsByUserId(int userId) {
-        return null;
+    public List<PaymentGetResponse> getBillPaymentsForUserByUserId(int userId) {
+        if (!usersRepository.userIsExist(userId)) {
+            throw new NotFoundException("user not found by id");
+        }
+
+        List<Payment> paymentList = paymentRepository.getPaymentsByCreatorId(userId);
+
+        return paymentList.stream()
+                .map(payment -> PaymentGetResponse.builder()
+                        .paymentId(payment.getUuid())
+                        .amount(payment.getAmount())
+                        .creatorId(payment.getCreatorId())
+                        .payerId(payment.getPayerId())
+                        .comment(payment.getComment())
+                        .date(payment.getDate())
+                        .status(payment.getStatus())
+                        .build()
+                ).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<PaymentGetResponse> getUnpaidPaymentsForUserByUserID(int userId) {
+        if (!usersRepository.userIsExist(userId)) {
+            throw new NotFoundException("user not found by id");
+        }
+
+        List<Payment> paymentList = paymentRepository.getPaymentsByPayerId(userId);
+
+        return paymentList.stream()
+                .filter(payment -> payment.getStatus() == PaymentStatus.UNPAID)
+                .map(payment -> PaymentGetResponse.builder()
+                        .paymentId(payment.getUuid())
+                        .amount(payment.getAmount())
+                        .creatorId(payment.getCreatorId())
+                        .payerId(payment.getPayerId())
+                        .comment(payment.getComment())
+                        .date(payment.getDate())
+                        .status(payment.getStatus())
+                        .build()
+                ).collect(Collectors.toList());
     }
 }

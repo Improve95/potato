@@ -2,6 +2,7 @@ package cft.intensive.potato.core.repository;
 
 import cft.intensive.potato.model.payment.Payment;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface PaymentRepository {
@@ -10,5 +11,7 @@ public interface PaymentRepository {
 
     UUID addNewPayment(Payment payment);
 
-//    void changePaymentStatus(PaymentStatus paymentStatus);
+    List<Payment> getPaymentsByCreatorId(int creatorId);
+
+    List<Payment> getPaymentsByPayerId(int creatorId);
 }

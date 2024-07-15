@@ -257,7 +257,7 @@ Http status code: 404:
 }
 ```
 
-GET /payments/bill/users/{userId} - получение выставленных счетов пользователем {userId}
+GET /payments/bill/users/{userId} - получение счетов выставленных пользователем {userId}
 GET /payments/unpaid/users/{userId} - получение счетов, которые необходимо оплатить пользователю {userId}
 
 Response

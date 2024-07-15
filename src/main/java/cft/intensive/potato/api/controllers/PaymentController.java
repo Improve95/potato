@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -36,9 +37,15 @@ public class PaymentController {
         paymentService.deletePayment(paymentId, creatorId);
     }
 
-    @GetMapping("/bill/users/{userId}")
-    public PaymentGetResponse getBillPaymentsByUserId(@PathVariable int userId) {
+    @GetMapping("/billed/users/{userId}")
+    public List<PaymentGetResponse> getBillPaymentsByUserId(@PathVariable int userId) {
         log.info("request arrived: get bill payments by user id {}", userId);
-        return paymentService.getBillPaymentsByUserId(userId);
+        return paymentService.getBillPaymentsForUserByUserId(userId);
+    }
+
+    @GetMapping("/unpaid/users/{userId}")
+    public List<PaymentGetResponse> getUnpaidPaymentsByUserId(@PathVariable int userId) {
+        log.info("request arrived: get bill payments by user id {}", userId);
+        return paymentService.getUnpaidPaymentsForUserByUserID(userId);
     }
 }
