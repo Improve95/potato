@@ -11,6 +11,8 @@ public interface PaymentService {
 
     PaymentPostResponse createNewPayment(PaymentPostRequest paymentPostRequest);
 
+    void payPaymentByUser(UUID paymentId, int userId);
+
     void deletePayment(UUID paymentId, int userId);
 
     List<PaymentGetResponse> getBillPaymentsForUserByUserId(int userId);

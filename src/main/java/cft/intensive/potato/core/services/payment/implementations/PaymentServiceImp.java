@@ -4,10 +4,12 @@ import cft.intensive.potato.api.dto.payment.PaymentGetResponse;
 import cft.intensive.potato.api.dto.payment.PaymentPostRequest;
 import cft.intensive.potato.api.dto.payment.PaymentPostResponse;
 import cft.intensive.potato.core.exceptions.NoAccessException;
+import cft.intensive.potato.core.exceptions.transfer.NotEnoughtMoneyException;
 import cft.intensive.potato.core.exceptions.transfer.NotFoundException;
 import cft.intensive.potato.core.repository.PaymentRepository;
 import cft.intensive.potato.core.repository.UsersRepository;
 import cft.intensive.potato.core.services.payment.PaymentService;
+import cft.intensive.potato.model.User;
 import cft.intensive.potato.model.payment.Payment;
 import cft.intensive.potato.model.payment.PaymentStatus;
 import jakarta.transaction.Transactional;
@@ -53,6 +55,23 @@ public class PaymentServiceImp implements PaymentService {
                 .status(newPayment.getStatus())
                 .date(newPayment.getDate())
                 .build();
+    }
+
+    @Transactional
+    @Override
+    public void payPaymentByUser(UUID paymentId, int userId) {
+        Payment payment = Optional.ofNullable(paymentRepository.getById(paymentId))
+                .orElseThrow(() -> new NotFoundException("payment not found by id"));
+
+        User user = Optional.ofNullable(usersRepository.getById(userId))
+                .orElseThrow(() -> new NotFoundException("user not found by id"));
+
+        if (user.getWallet().getBalance() < payment.getAmount()) {
+            throw new NotEnoughtMoneyException("not enought money for this operation");
+        }
+
+        user.getWallet().subAmountFromBalance(payment.getAmount());
+        payment.setStatus(PaymentStatus.PAID);
     }
 
     @Transactional

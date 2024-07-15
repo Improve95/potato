@@ -31,6 +31,12 @@ public class PaymentController {
         return paymentService.createNewPayment(paymentPostRequest);
     }
 
+    @PostMapping("/pay/{paymentId}/users/{userId}")
+    public void PayPayment(@PathVariable UUID paymentId, @PathVariable int userId) {
+        log.info("request arrived: pay payment {} by user {}", paymentId, userId);
+        paymentService.payPaymentByUser(paymentId, userId);
+    }
+
     @DeleteMapping("/{paymentId}/users/{creatorId}")
     public void deletePayment(@PathVariable UUID paymentId, @PathVariable int creatorId) {
         log.info("request arrived: delete payment with id {} by user {}", paymentId, creatorId);
