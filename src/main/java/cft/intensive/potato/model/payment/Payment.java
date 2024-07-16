@@ -22,7 +22,8 @@ public class Payment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID uuid;
+    @Column(name = "id")
+    private UUID paymentId;
 
     private int amount;
 

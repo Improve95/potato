@@ -259,6 +259,7 @@ Http status code: 404:
 
 GET /payments/bill/users/{userId} - получение счетов выставленных пользователем {userId}
 GET /payments/unpaid/users/{userId} - получение счетов, которые необходимо оплатить пользователю {userId}
+GET /payments/{paymentId}/unpaid/users/{userId} - получение неоплаченного счета с номером {paymentId} пользователем {userId}
 
 Response
 
@@ -275,28 +276,6 @@ Http status code: 200:
     "status": "string"
 }
 ]
-```
-
-Http status code: 404:
-```
-{}
-```
-
-GET /payments/{paymentOperationId}/users/{userId} - получение выставленного счета с номером {paymentOperationId} пользователем {userId}
-
-Response
-
-Http status code: 200:
-```
-{
-    "paymentOperationId": "number"
-    "paymentAmount: "number"
-    "paymentCreatorId": "number"
-    "payerId": "number"
-    "comment": "message"
-    "createPaymentDate": "string"
-    "paymentStatus": "number"
-}
 ```
 
 Http status code: 404:

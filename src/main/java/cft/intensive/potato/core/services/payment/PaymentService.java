@@ -15,7 +15,9 @@ public interface PaymentService {
 
     void deletePayment(UUID paymentId, int userId);
 
-    List<PaymentGetResponse> getBillPaymentsForUserByUserId(int userId);
+    PaymentGetResponse getBillPaymentForUser(UUID paymentId, int userId);
 
-    List<PaymentGetResponse> getUnpaidPaymentsForUserByUserID(int userId);
+    List<PaymentGetResponse> getBillPaymentsForUser(int userId);
+
+    List<PaymentGetResponse> getUnpaidPaymentsForUser(int userId);
 }

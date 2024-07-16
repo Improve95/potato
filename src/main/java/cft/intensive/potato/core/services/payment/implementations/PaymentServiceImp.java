@@ -45,24 +45,10 @@ public class PaymentServiceImp implements PaymentService {
         Payment newPayment = modelMapper.map(paymentPostRequest, Payment.class);
         newPayment.setStatus(PaymentStatus.UNPAID);
         newPayment.setDate(LocalDateTime.now());
-        /*Payment newPayment = Payment.builder()
-                .creatorId(paymentPostRequest.getCreatorId())
-                .payerId(paymentPostRequest.getPayerId())
-                .amount(paymentPostRequest.getAmount())
-                .comment(paymentPostRequest.getComment())
-                .status(PaymentStatus.UNPAID)
-                .date(LocalDateTime.now())
-                .build();*/
 
         paymentRepository.addNewPayment(newPayment);
 
         return modelMapper.map(newPayment, PaymentPostResponse.class);
-
-        /*return PaymentPostResponse.builder()
-                .paymentId(newPayment.getUuid())
-                .status(newPayment.getStatus())
-                .date(newPayment.getDate())
-                .build();*/
     }
 
     @Transactional
@@ -73,6 +59,10 @@ public class PaymentServiceImp implements PaymentService {
 
         User user = Optional.ofNullable(usersRepository.getById(userId))
                 .orElseThrow(() -> new NotFoundException("user not found by id"));
+
+        if (payment.getPayerId() != userId) {
+            throw new NoAccessException("you cannot pay this payment");
+        }
 
         if (user.getWallet().getBalance() < payment.getAmount()) {
             throw new NotEnoughtMoneyException("not enought money for this operation");
@@ -96,7 +86,7 @@ public class PaymentServiceImp implements PaymentService {
     }
 
     @Override
-    public List<PaymentGetResponse> getBillPaymentsForUserByUserId(int userId) {
+    public List<PaymentGetResponse> getBillPaymentsForUser(int userId) {
         if (!usersRepository.userIsExist(userId)) {
             throw new NotFoundException("user not found by id");
         }
@@ -109,7 +99,19 @@ public class PaymentServiceImp implements PaymentService {
     }
 
     @Override
-    public List<PaymentGetResponse> getUnpaidPaymentsForUserByUserID(int userId) {
+    public PaymentGetResponse getBillPaymentForUser(UUID paymentId, int userId) {
+        Payment payment = Optional.ofNullable(paymentRepository.getById(paymentId))
+                .orElseThrow(() -> new NotFoundException("payment not found by id"));
+
+        if (payment.getPayerId() != userId) {
+            throw new NoAccessException("you cannot get this payment");
+        }
+
+        return modelMapper.map(payment, PaymentGetResponse.class);
+    }
+
+    @Override
+    public List<PaymentGetResponse> getUnpaidPaymentsForUser(int userId) {
         if (!usersRepository.userIsExist(userId)) {
             throw new NotFoundException("user not found by id");
         }

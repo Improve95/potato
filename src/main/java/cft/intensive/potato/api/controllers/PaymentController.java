@@ -43,15 +43,21 @@ public class PaymentController {
         paymentService.deletePayment(paymentId, creatorId);
     }
 
+    @GetMapping("/{paymentId}/unpaid/users/{userId}")
+    public PaymentGetResponse getBillPaymentByIdForPayer(@PathVariable UUID paymentId, @PathVariable int userId) {
+        log.info("request arrived: delete payment with id {} by user {}", paymentId, userId);
+        return paymentService.getBillPaymentForUser(paymentId, userId);
+    }
+
     @GetMapping("/billed/users/{userId}")
     public List<PaymentGetResponse> getBillPaymentsByUserId(@PathVariable int userId) {
         log.info("request arrived: get bill payments by user id {}", userId);
-        return paymentService.getBillPaymentsForUserByUserId(userId);
+        return paymentService.getBillPaymentsForUser(userId);
     }
 
     @GetMapping("/unpaid/users/{userId}")
     public List<PaymentGetResponse> getUnpaidPaymentsByUserId(@PathVariable int userId) {
         log.info("request arrived: get bill payments by user id {}", userId);
-        return paymentService.getUnpaidPaymentsForUserByUserID(userId);
+        return paymentService.getUnpaidPaymentsForUser(userId);
     }
 }
