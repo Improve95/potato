@@ -1,7 +1,7 @@
 package cft.intensive.potato.core.services.user.implementations;
 
-import cft.intensive.potato.api.dto.user.UserCreateRequest;
-import cft.intensive.potato.api.dto.user.UserCreateResponse;
+import cft.intensive.potato.api.dto.user.UserPostRequest;
+import cft.intensive.potato.api.dto.user.UserPostResponse;
 import cft.intensive.potato.api.dto.user.UserGetResponse;
 import cft.intensive.potato.api.dto.user.UserPatchRequest;
 import cft.intensive.potato.core.exceptions.IncorrectRequestException;
@@ -33,17 +33,17 @@ public class UserServiceImp implements UserService {
 
     @Transactional
     @Override
-    public UserCreateResponse createUser(UserCreateRequest userCreateRequest) {
-        if (!userCreateValidator.validateUserCreateRequest(userCreateRequest)) {
+    public UserPostResponse createUser(UserPostRequest userPostRequest) {
+        if (!userCreateValidator.validateUserCreateRequest(userPostRequest)) {
             throw new IncorrectRequestException();
         }
-        if (usersRepository.userIsExist(userCreateRequest.getTelephoneNumber())) {
+        if (usersRepository.userIsExist(userPostRequest.getTelephoneNumber())) {
             throw new UserAlreadyExistException();
         }
 
         User newUser = new User();
-        userPatchMapper.updateUserFromCreateUserRequest(userCreateRequest, newUser);
-        newUser.setPasswordHash(hashCalculator.createHash(userCreateRequest.getPassword()));
+        userPatchMapper.updateUserFromCreateUserRequest(userPostRequest, newUser);
+        newUser.setPasswordHash(hashCalculator.createHash(userPostRequest.getPassword()));
 
         Wallet wallet = Wallet.builder()
                 .balance(1000)
@@ -54,7 +54,7 @@ public class UserServiceImp implements UserService {
 
         usersRepository.addUser(newUser);
 
-        return UserCreateResponse.builder()
+        return UserPostResponse.builder()
                 .id(newUser.getId())
                 .build();
     }

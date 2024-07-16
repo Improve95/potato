@@ -1,10 +1,10 @@
 package cft.intensive.potato.core.services.transfer;
 
-import cft.intensive.potato.api.dto.transfer.TransferCreateRequest;
+import cft.intensive.potato.api.dto.transfer.TransferPostRequest;
 
 public interface TransferValidation {
 
-    boolean validateTransferCreateRequest(TransferCreateRequest transferCreateRequest);
+    boolean validateTransferCreateRequest(TransferPostRequest transferPostRequest);
 
-    boolean isEnoughtMoneyForTransfer(TransferCreateRequest transferCreateRequest);
+    boolean isEnoughtMoneyForTransfer(TransferPostRequest transferPostRequest);
 }

@@ -1,6 +1,6 @@
 package cft.intensive.potato.core.services.user.mappers;
 
-import cft.intensive.potato.api.dto.user.UserCreateRequest;
+import cft.intensive.potato.api.dto.user.UserPostRequest;
 import cft.intensive.potato.api.dto.user.UserPatchRequest;
 import cft.intensive.potato.model.User;
 import org.mapstruct.Mapper;
@@ -15,5 +15,5 @@ import org.springframework.stereotype.Component;
 public interface UserPatchMapper {
     void updateUserFromDto(UserPatchRequest userPatchRequest, @MappingTarget User user);
 
-    void updateUserFromCreateUserRequest(UserCreateRequest userCreateRequest, @MappingTarget User user);
+    void updateUserFromCreateUserRequest(UserPostRequest userPostRequest, @MappingTarget User user);
 }

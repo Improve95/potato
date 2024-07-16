@@ -1,6 +1,6 @@
 package cft.intensive.potato.api.controllers;
 
-import cft.intensive.potato.api.dto.wallet.WalletGetResponse;
+import cft.intensive.potato.api.dto.user.wallet.WalletGetResponse;
 import cft.intensive.potato.core.services.wallet.WalletService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

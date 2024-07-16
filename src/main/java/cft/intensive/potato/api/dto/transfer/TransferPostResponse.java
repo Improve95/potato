@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @Jacksonized
 @ToString
-public class TransferCreateResponse {
+public class TransferPostResponse {
 
     private final int transferId;
 

@@ -1,6 +1,6 @@
 package cft.intensive.potato.core.services.transfer.implementations;
 
-import cft.intensive.potato.api.dto.transfer.TransferCreateRequest;
+import cft.intensive.potato.api.dto.transfer.TransferPostRequest;
 import cft.intensive.potato.core.repository.WalletRepository;
 import cft.intensive.potato.core.services.transfer.TransferValidation;
 import lombok.RequiredArgsConstructor;
@@ -14,10 +14,10 @@ public class TransferValidationImp implements TransferValidation {
 
     private final WalletRepository walletRepository;
 
-    public boolean validateTransferCreateRequest(TransferCreateRequest transferCreateRequest) {
-        if (transferCreateRequest.getSenderWalletId() < 0
-                || transferCreateRequest.getReceiverWalletId() < 0
-                || transferCreateRequest.getAmount() < 0) {
+    public boolean validateTransferCreateRequest(TransferPostRequest transferPostRequest) {
+        if (transferPostRequest.getSenderWalletId() < 0
+                || transferPostRequest.getReceiverWalletId() < 0
+                || transferPostRequest.getAmount() < 0) {
             /*и другие проверки*/
             return false;
         }
@@ -25,9 +25,9 @@ public class TransferValidationImp implements TransferValidation {
         return true;
     }
 
-    public boolean isEnoughtMoneyForTransfer(TransferCreateRequest transferCreateRequest) {
-        if (walletRepository.getById(transferCreateRequest.getSenderWalletId()).getBalance()
-                < transferCreateRequest.getAmount()) return false;
+    public boolean isEnoughtMoneyForTransfer(TransferPostRequest transferPostRequest) {
+        if (walletRepository.getById(transferPostRequest.getSenderWalletId()).getBalance()
+                < transferPostRequest.getAmount()) return false;
         return true;
     }
 }

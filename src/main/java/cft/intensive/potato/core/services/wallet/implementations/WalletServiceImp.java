@@ -1,6 +1,6 @@
 package cft.intensive.potato.core.services.wallet.implementations;
 
-import cft.intensive.potato.api.dto.wallet.WalletGetResponse;
+import cft.intensive.potato.api.dto.user.wallet.WalletGetResponse;
 import cft.intensive.potato.core.exceptions.transfer.NotFoundException;
 import cft.intensive.potato.core.repository.WalletRepository;
 import cft.intensive.potato.core.services.wallet.WalletService;

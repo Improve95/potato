@@ -1,13 +1,13 @@
 package cft.intensive.potato.core.services.user;
 
-import cft.intensive.potato.api.dto.user.UserCreateRequest;
-import cft.intensive.potato.api.dto.user.UserCreateResponse;
+import cft.intensive.potato.api.dto.user.UserPostRequest;
+import cft.intensive.potato.api.dto.user.UserPostResponse;
 import cft.intensive.potato.api.dto.user.UserGetResponse;
 import cft.intensive.potato.api.dto.user.UserPatchRequest;
 
 public interface UserService {
 
-    UserCreateResponse createUser(UserCreateRequest userCreateRequest);
+    UserPostResponse createUser(UserPostRequest userPostRequest);
 
     UserGetResponse getById(int id);
 

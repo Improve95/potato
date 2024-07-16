@@ -1,7 +1,7 @@
 package cft.intensive.potato.api.controllers;
 
-import cft.intensive.potato.api.dto.user.UserCreateRequest;
-import cft.intensive.potato.api.dto.user.UserCreateResponse;
+import cft.intensive.potato.api.dto.user.UserPostRequest;
+import cft.intensive.potato.api.dto.user.UserPostResponse;
 import cft.intensive.potato.api.dto.user.UserGetResponse;
 import cft.intensive.potato.api.dto.user.UserPatchRequest;
 import cft.intensive.potato.core.services.user.UserService;
@@ -24,9 +24,9 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public UserCreateResponse addUser(@RequestBody UserCreateRequest userCreateRequest) {
-        log.info("request arrived - add user: {}", userCreateRequest.toString());
-        return userService.createUser(userCreateRequest);
+    public UserPostResponse addUser(@RequestBody UserPostRequest userPostRequest) {
+        log.info("request arrived - add user: {}", userPostRequest.toString());
+        return userService.createUser(userPostRequest);
     }
 
     @GetMapping("/{id}")
