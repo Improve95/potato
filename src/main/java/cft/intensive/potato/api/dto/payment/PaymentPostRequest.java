@@ -1,19 +1,21 @@
 package cft.intensive.potato.api.dto.payment;
 
-import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.jackson.Jacksonized;
 
-@Builder
 @Getter
+@Setter
 @Jacksonized
+@NoArgsConstructor
 public class PaymentPostRequest {
 
-    private final int creatorId;
+    private int creatorId;
 
-    private final int payerId;
+    private int payerId;
 
-    private final int amount;
+    private int amount;
 
-    private final String comment;
+    private String comment;
 }

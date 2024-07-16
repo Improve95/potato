@@ -15,6 +15,7 @@ import cft.intensive.potato.model.payment.PaymentStatus;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -31,6 +32,8 @@ public class PaymentServiceImp implements PaymentService {
     private final UsersRepository usersRepository;
     private final PaymentRepository paymentRepository;
 
+    private final ModelMapper modelMapper;
+
     @Transactional
     @Override
     public PaymentPostResponse createNewPayment(PaymentPostRequest paymentPostRequest) {
@@ -39,22 +42,27 @@ public class PaymentServiceImp implements PaymentService {
             throw new NotFoundException("users not found by id");
         }
 
-        Payment newPayment = Payment.builder()
+        Payment newPayment = modelMapper.map(paymentPostRequest, Payment.class);
+        newPayment.setStatus(PaymentStatus.UNPAID);
+        newPayment.setDate(LocalDateTime.now());
+        /*Payment newPayment = Payment.builder()
                 .creatorId(paymentPostRequest.getCreatorId())
                 .payerId(paymentPostRequest.getPayerId())
                 .amount(paymentPostRequest.getAmount())
                 .comment(paymentPostRequest.getComment())
                 .status(PaymentStatus.UNPAID)
                 .date(LocalDateTime.now())
-                .build();
+                .build();*/
 
         paymentRepository.addNewPayment(newPayment);
 
-        return PaymentPostResponse.builder()
+        return modelMapper.map(newPayment, PaymentPostResponse.class);
+
+        /*return PaymentPostResponse.builder()
                 .paymentId(newPayment.getUuid())
                 .status(newPayment.getStatus())
                 .date(newPayment.getDate())
-                .build();
+                .build();*/
     }
 
     @Transactional
@@ -96,16 +104,8 @@ public class PaymentServiceImp implements PaymentService {
         List<Payment> paymentList = paymentRepository.getPaymentsByCreatorId(userId);
 
         return paymentList.stream()
-                .map(payment -> PaymentGetResponse.builder()
-                        .paymentId(payment.getUuid())
-                        .amount(payment.getAmount())
-                        .creatorId(payment.getCreatorId())
-                        .payerId(payment.getPayerId())
-                        .comment(payment.getComment())
-                        .date(payment.getDate())
-                        .status(payment.getStatus())
-                        .build()
-                ).collect(Collectors.toList());
+                .map(payment -> modelMapper.map(payment, PaymentGetResponse.class))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -118,15 +118,7 @@ public class PaymentServiceImp implements PaymentService {
 
         return paymentList.stream()
                 .filter(payment -> payment.getStatus() == PaymentStatus.UNPAID)
-                .map(payment -> PaymentGetResponse.builder()
-                        .paymentId(payment.getUuid())
-                        .amount(payment.getAmount())
-                        .creatorId(payment.getCreatorId())
-                        .payerId(payment.getPayerId())
-                        .comment(payment.getComment())
-                        .date(payment.getDate())
-                        .status(payment.getStatus())
-                        .build()
-                ).collect(Collectors.toList());
+                .map(payment -> modelMapper.map(payment, PaymentGetResponse.class))
+                .collect(Collectors.toList());
     }
 }

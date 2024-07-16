@@ -1,31 +1,31 @@
 package cft.intensive.potato.api.dto.payment;
 
 import cft.intensive.potato.model.payment.PaymentStatus;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.jackson.Jacksonized;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Builder
 @Getter
+@Setter
 @ToString
-@Jacksonized
+@NoArgsConstructor
 public class PaymentGetResponse {
 
-    private final UUID paymentId;
+    private UUID paymentId;
 
-    private final int amount;
+    private int amount;
 
-    private final int creatorId;
+    private int creatorId;
 
-    private final int payerId;
+    private int payerId;
 
-    private final String comment;
+    private String comment;
 
-    private final LocalDateTime date;
+    private LocalDateTime date;
 
-    private final PaymentStatus status;
+    private PaymentStatus status;
 }
