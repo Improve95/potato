@@ -1,4 +1,4 @@
-package ru.improve.potato.core.services.user;
+package ru.improve.potato.api.dtoMappers;
 
 import ru.improve.potato.api.dto.user.UserPostRequest;
 import ru.improve.potato.api.dto.user.UserPatchRequest;
@@ -12,8 +12,10 @@ import org.springframework.stereotype.Component;
 @Component(value = "userPatchMapper")
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-public interface UserPatchMapper {
+public interface UserMapper {
     void updateUserFromDto(UserPatchRequest userPatchRequest, @MappingTarget User user);
 
     void updateUserFromCreateUserRequest(UserPostRequest userPostRequest, @MappingTarget User user);
+
+
 }

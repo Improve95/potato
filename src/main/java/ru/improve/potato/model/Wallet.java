@@ -8,11 +8,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.extern.jackson.Jacksonized;
 
 @Entity
 @Table(name = "wallets")
@@ -20,9 +18,12 @@ import lombok.extern.jackson.Jacksonized;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-@Jacksonized
 public class Wallet {
+
+    public Wallet(Integer balance, User user) {
+        this.balance = balance;
+        this.user = user;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
