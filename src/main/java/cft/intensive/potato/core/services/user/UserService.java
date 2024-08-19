@@ -1,9 +1,9 @@
 package cft.intensive.potato.core.services.user;
 
-import cft.intensive.potato.api.dto.user.UserPostRequest;
-import cft.intensive.potato.api.dto.user.UserPostResponse;
-import cft.intensive.potato.api.dto.user.UserGetResponse;
-import cft.intensive.potato.api.dto.user.UserPatchRequest;
+import cft.intensive.potato.api.dto.transfer.user.UserPostRequest;
+import cft.intensive.potato.api.dto.transfer.user.UserPostResponse;
+import cft.intensive.potato.api.dto.transfer.user.UserGetResponse;
+import cft.intensive.potato.api.dto.transfer.user.UserPatchRequest;
 
 public interface UserService {
 

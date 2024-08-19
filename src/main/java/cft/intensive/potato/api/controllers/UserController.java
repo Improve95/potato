@@ -1,9 +1,9 @@
 package cft.intensive.potato.api.controllers;
 
-import cft.intensive.potato.api.dto.user.UserPostRequest;
-import cft.intensive.potato.api.dto.user.UserPostResponse;
-import cft.intensive.potato.api.dto.user.UserGetResponse;
-import cft.intensive.potato.api.dto.user.UserPatchRequest;
+import cft.intensive.potato.api.dto.transfer.user.UserPostRequest;
+import cft.intensive.potato.api.dto.transfer.user.UserPostResponse;
+import cft.intensive.potato.api.dto.transfer.user.UserGetResponse;
+import cft.intensive.potato.api.dto.transfer.user.UserPatchRequest;
 import cft.intensive.potato.core.services.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
