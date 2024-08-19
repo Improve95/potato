@@ -1,8 +1,6 @@
 package cft.intensive.potato.core.services.user.implementations;
 
 import cft.intensive.potato.api.dto.transfer.user.UserPostRequest;
-import cft.intensive.potato.core.services.user.UserCreateValidator;
-import org.springframework.stereotype.Component;
 
 @Component
 public class UserCreateValidatorImp implements UserCreateValidator {
