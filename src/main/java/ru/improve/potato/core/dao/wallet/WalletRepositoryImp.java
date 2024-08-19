@@ -1,6 +1,6 @@
-package ru.improve.potato.core.repository.implementations;
+package ru.improve.potato.core.dao.wallet;
 
-import ru.improve.potato.core.repository.WalletRepository;
+import ru.improve.potato.core.dao.wallet.WalletRepository;
 import ru.improve.potato.model.Wallet;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;

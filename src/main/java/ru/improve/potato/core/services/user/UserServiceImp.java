@@ -7,38 +7,28 @@ import ru.improve.potato.api.dto.user.UserGetResponse;
 import ru.improve.potato.api.dto.user.UserPatchRequest;
 import ru.improve.potato.api.dto.user.UserPostRequest;
 import ru.improve.potato.api.dto.user.UserPostResponse;
-import ru.improve.potato.core.exceptions.IncorrectRequestException;
-import ru.improve.potato.core.exceptions.transfer.NotFoundException;
-import ru.improve.potato.core.exceptions.user.UserAlreadyExistException;
-import ru.improve.potato.core.repository.UsersRepository;
-import ru.improve.potato.core.validators.user.UserValidator;
+import ru.improve.potato.core.exceptions.NotFoundException;
+import ru.improve.potato.core.dao.repository.UserRepository;
 import ru.improve.potato.model.User;
 import ru.improve.potato.model.Wallet;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImp implements UserService {
 
-    private final UsersRepository usersRepository;
-
-    private final UserValidator userValidator;
+    private final UserRepository userRepository;
 
     private final UserPatchMapper userPatchMapper;
 
     @Transactional
     @Override
-    public UserPostResponse createUser(UserPostRequest userPostRequest) {
-        if (!userValidator.validateUserCreateRequest(userPostRequest)) {
-            throw new IncorrectRequestException();
-        }
-        if (usersRepository.userIsExist(userPostRequest.getTelephoneNumber())) {
-            throw new UserAlreadyExistException();
-        }
+    public UserPostResponse createNewUser(User user) {
 
-        User newUser = new User();
-        userPatchMapper.updateUserFromCreateUserRequest(userPostRequest, newUser);
+//        User newUser = new User();
+//        userPatchMapper.updateUserFromCreateUserRequest(userPostRequest, newUser);
 //        newUser.setPasswordHash(hashCalculator.createHash(userPostRequest.getPassword()));
 
         Wallet wallet = Wallet.builder()
@@ -48,7 +38,7 @@ public class UserServiceImp implements UserService {
 
         newUser.setWallet(wallet);
 
-        usersRepository.addUser(newUser);
+        usersDAO.addUser(newUser);
 
         return UserPostResponse.builder()
                 .id(newUser.getId())
@@ -57,8 +47,8 @@ public class UserServiceImp implements UserService {
 
     @Override
     public UserGetResponse getById(int id) {
-        User user = Optional.ofNullable(usersRepository.getById(id))
-                .orElseThrow(() -> new NotFoundException("user not found by id"));
+        User user = Optional.ofNullable(usersDAO.getById(id))
+                .orElseThrow(() -> new NotFoundException("user not found", List.of("id")));
 
         return UserGetResponse.builder()
                 .firstName(user.getFirstName())
@@ -71,11 +61,11 @@ public class UserServiceImp implements UserService {
 
     @Transactional
     @Override
-    public void patchUserById(UserPatchRequest userPatchRequest, int id) {
-        User patchUser = usersRepository.getById(id);
+    public void patchUserById(User user, int id) {
+        User patchUser = usersDAO.getById(id);
 
         if (patchUser == null) {
-            throw new NotFoundException("user not found");
+            throw new NotFoundException("user not found", List.of("id"));
         }
 
         userPatchMapper.updateUserFromDto(userPatchRequest, patchUser);

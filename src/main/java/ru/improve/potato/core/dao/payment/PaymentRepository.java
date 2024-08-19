@@ -1,4 +1,4 @@
-package ru.improve.potato.core.repository;
+package ru.improve.potato.core.dao.payment;
 
 import ru.improve.potato.model.payment.Payment;
 

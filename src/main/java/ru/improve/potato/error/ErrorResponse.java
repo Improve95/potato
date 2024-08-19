@@ -1,9 +1,20 @@
 package ru.improve.potato.error;
 
-import lombok.Value;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-@Value
+import java.time.Instant;
+import java.util.Set;
+
+@Getter
+@Setter
+@AllArgsConstructor
 public class ErrorResponse {
 
     private String message;
+
+    private Set<String> fieldsWithError;
+
+    private Instant time;
 }

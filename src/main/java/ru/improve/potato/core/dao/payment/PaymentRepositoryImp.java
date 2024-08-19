@@ -1,6 +1,5 @@
-package ru.improve.potato.core.repository.implementations;
+package ru.improve.potato.core.dao.payment;
 
-import ru.improve.potato.core.repository.PaymentRepository;
 import ru.improve.potato.model.payment.Payment;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;

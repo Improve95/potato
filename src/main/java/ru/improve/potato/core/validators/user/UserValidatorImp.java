@@ -1,20 +1,25 @@
 package ru.improve.potato.core.validators.user;
 
 import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
+import ru.improve.potato.api.dto.user.UserPatchRequest;
 import ru.improve.potato.api.dto.user.UserPostRequest;
+import ru.improve.potato.core.validators.DefaultValidator;
 
 @Component
-public class UserValidatorImp implements UserValidator {
+public class UserValidatorImp extends DefaultValidator implements UserValidator {
 
     @Override
-    public boolean validateUserCreateRequest(UserPostRequest userPostRequest) {
-        if (userPostRequest.getFirstName().length() < 0 || userPostRequest.getFirstName().length() > 50 ||
-            userPostRequest.getSecondName().length() < 0 || userPostRequest.getSecondName().length() > 50 ||
-                userPostRequest.getTelephoneNumber().length() != 11 ||
-            userPostRequest.getPassword().length() < 0 || userPostRequest.getPassword().length() > 64) {
-            /*другие проверки*/
-            return false;
+    public boolean supports(Class<?> clazz) {
+        if (clazz.equals(UserPostRequest.class) ||
+                clazz.equals(UserPatchRequest.class)) {
+            return true;
         }
-        return true;
+        return false;
+    }
+
+    @Override
+    public void validate(Object target, Errors errors) {
+        createAndThrowException(errors);
     }
 }

@@ -1,6 +1,5 @@
-package ru.improve.potato.core.repository.implementations;
+package ru.improve.potato.core.dao.transfer;
 
-import ru.improve.potato.core.repository.TransferRepository;
 import ru.improve.potato.model.transfer.Transfer;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;

@@ -1,7 +1,7 @@
 package ru.improve.potato.core.validators.transfer;
 
 import ru.improve.potato.api.dto.transfer.TransferPostRequest;
-import ru.improve.potato.core.repository.WalletRepository;
+import ru.improve.potato.core.dao.wallet.WalletRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

@@ -1,25 +1,27 @@
 package ru.improve.potato.api.dto.user;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
+import lombok.Setter;
 import lombok.extern.jackson.Jacksonized;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
-@Builder
 @Getter
+@Setter
+@AllArgsConstructor
+@Builder
 @Jacksonized
-@ToString
 public class UserGetResponse {
 
-    private final String firstName;
+    private String firstName;
 
-    private final String secondName;
+    private String secondName;
 
-    private final String telephoneNumber;
+    private String telephoneNumber;
 
-    private final String email;
+    private String email;
 
-    private final LocalDateTime birthdate;
+    private LocalDate birthdate;
 }

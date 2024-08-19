@@ -1,5 +1,7 @@
 package ru.improve.potato.api.controllers;
 
+import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
 import ru.improve.potato.api.dto.user.UserPostRequest;
 import ru.improve.potato.api.dto.user.UserPostResponse;
 import ru.improve.potato.api.dto.user.UserGetResponse;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.improve.potato.core.validators.user.UserValidator;
 
 @RestController(value = "userController")
 @RequestMapping("/users")
@@ -23,9 +26,15 @@ public class UserController {
 
     private final UserService userService;
 
+    private final UserValidator userValidator;
+
     @PostMapping
-    public UserPostResponse addUser(@RequestBody UserPostRequest userPostRequest) {
-        log.info("request arrived - add user: {}", userPostRequest.toString());
+    public UserPostResponse addUser(@RequestBody @Valid UserPostRequest userPostRequest,
+                                    BindingResult bindingResult) {
+
+        userValidator.validate(userPostRequest, bindingResult);
+
+        log.info("request arrived - add user: {}", userPostRequest);
         return userService.createUser(userPostRequest);
     }
 
@@ -36,7 +45,11 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    public void patchUserById(@RequestBody UserPatchRequest userPatchRequest, int id) {
+    public void patchUserById(@RequestBody @Valid UserPatchRequest userPatchRequest, BindingResult bindingResult,
+                              @PathVariable("id") int id) {
+
+        userValidator.validate(userPatchRequest, bindingResult);
+
         log.info("request arrived - request patch user by id: {}", id);
         userService.patchUserById(userPatchRequest, id);
     }

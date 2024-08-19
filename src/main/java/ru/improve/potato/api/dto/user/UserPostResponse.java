@@ -1,15 +1,17 @@
 package ru.improve.potato.api.dto.user;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
+import lombok.Setter;
 import lombok.extern.jackson.Jacksonized;
 
-@Builder
 @Getter
+@Setter
+@AllArgsConstructor
+@Builder
 @Jacksonized
-@ToString
 public class UserPostResponse {
 
-    private final int id;
+    private int id;
 }

@@ -1,44 +1,24 @@
 package ru.improve.potato.error;
 
-import ru.improve.potato.core.exceptions.IncorrectRequestException;
-import ru.improve.potato.core.exceptions.NoAccessException;
-import ru.improve.potato.core.exceptions.transfer.NotEnoughtMoneyException;
-import ru.improve.potato.core.exceptions.transfer.NotFoundException;
-import ru.improve.potato.core.exceptions.user.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.improve.potato.core.exceptions.user.PersonOnCreateException;
 
 @RestControllerAdvice
 @Slf4j
 public class PotatoExceptionHandler {
 
     @org.springframework.web.bind.annotation.ExceptionHandler
-    ResponseEntity<ErrorResponse> handle(Exception exception) {
-        return ResponseEntity.status(getHttpStatus(exception))
-                .body(new ErrorResponse(exception.getMessage()));
+    ResponseEntity<ErrorResponse> handle(DefaultPotatoException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), ex.getFieldsWithError(), ex.getTime());
+        return new ResponseEntity<>(errorResponse, determineHttpStatus(ex));
     }
 
-    private static HttpStatus getHttpStatus(Exception exception) {
-        if (exception instanceof NotFoundException) {
-            return HttpStatus.NOT_FOUND;
-        }
-
-        if (exception instanceof UserAlreadyExistException) {
-            return HttpStatus.CONFLICT;
-        }
-
-        if (exception instanceof IncorrectRequestException) {
+    private static HttpStatus determineHttpStatus(Exception ex) {
+        if (ex instanceof PersonOnCreateException) {
             return HttpStatus.BAD_REQUEST;
-        }
-
-        if (exception instanceof NotEnoughtMoneyException) {
-            return HttpStatus.METHOD_NOT_ALLOWED;
-        }
-
-        if (exception instanceof NoAccessException) {
-            return HttpStatus.FORBIDDEN;
         }
 
         return HttpStatus.SERVICE_UNAVAILABLE;

@@ -6,22 +6,26 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
-import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.extern.jackson.Jacksonized;
 
 @Entity
 @Table(name = "wallets")
 @Getter
-@Builder
+@Setter
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Jacksonized
 public class Wallet {
 
     @Id
-    @SequenceGenerator(name = "sequence", sequenceName = "wallets_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequence")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private Integer balance;
@@ -37,6 +41,4 @@ public class Wallet {
     public void subAmountFromBalance(int diff) {
         this.balance -= diff;
     }
-
-    public Wallet() {}
 }

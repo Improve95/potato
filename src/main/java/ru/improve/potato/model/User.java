@@ -7,26 +7,24 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
-import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "users")
 @Getter
 @Setter
-@Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class User {
 
     @Id
-    @SequenceGenerator(name = "sequence", sequenceName = "users_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequence")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "first_name")
@@ -35,18 +33,15 @@ public class User {
     @Column(name = "second_name")
     private String secondName;
 
-    @Column(name = "telephone_number")
     private String phone;
 
     private String email;
 
-    private LocalDateTime birthdate;
+    private LocalDate birthdate;
 
-    @Column(name = "password_hash")
-    private long passwordHash;
+    @Column(name = "password")
+    private String password;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.PERSIST)
     private Wallet wallet;
-
-    public User() {}
 }

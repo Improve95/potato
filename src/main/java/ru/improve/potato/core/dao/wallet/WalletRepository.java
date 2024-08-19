@@ -1,4 +1,4 @@
-package ru.improve.potato.core.repository;
+package ru.improve.potato.core.dao.wallet;
 
 import ru.improve.potato.model.Wallet;
 

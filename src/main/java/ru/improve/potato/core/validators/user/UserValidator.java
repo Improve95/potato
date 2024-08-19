@@ -1,8 +1,7 @@
 package ru.improve.potato.core.validators.user;
 
-import ru.improve.potato.api.dto.user.UserPostRequest;
+import org.springframework.validation.Validator;
 
-public interface UserValidator {
+public interface UserValidator extends Validator {
 
-    boolean validateUserCreateRequest(UserPostRequest userPostRequest);
 }

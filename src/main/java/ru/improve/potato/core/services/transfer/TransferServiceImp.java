@@ -1,24 +1,24 @@
 package ru.improve.potato.core.services.transfer;
 
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import ru.improve.potato.api.dto.transfer.TransferGetResponse;
 import ru.improve.potato.api.dto.transfer.TransferPostRequest;
 import ru.improve.potato.api.dto.transfer.TransferPostResponse;
-import ru.improve.potato.api.dto.transfer.TransferGetResponse;
 import ru.improve.potato.core.exceptions.IncorrectRequestException;
+import ru.improve.potato.core.exceptions.NotFoundException;
 import ru.improve.potato.core.exceptions.transfer.NotEnoughtMoneyException;
-import ru.improve.potato.core.exceptions.transfer.NotFoundException;
-import ru.improve.potato.core.repository.TransferRepository;
-import ru.improve.potato.core.repository.UsersRepository;
-import ru.improve.potato.core.repository.WalletRepository;
+import ru.improve.potato.core.dao.transfer.TransferRepository;
+import ru.improve.potato.core.dao.user.UsersDAO;
+import ru.improve.potato.core.dao.wallet.WalletRepository;
 import ru.improve.potato.core.validators.transfer.TransferValidation;
 import ru.improve.potato.model.User;
 import ru.improve.potato.model.Wallet;
 import ru.improve.potato.model.transfer.Transfer;
 import ru.improve.potato.model.transfer.TransferType;
 import ru.improve.potato.model.transfer.UserTransferWay;
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TransferServiceImp implements TransferService {
 
-    private final UsersRepository usersRepository;
+    private final UsersDAO usersDAO;
     private final WalletRepository walletRepository;
     private final TransferRepository transferRepository;
 
@@ -41,13 +41,13 @@ public class TransferServiceImp implements TransferService {
 
     @Transactional
     @Override
-    public TransferPostResponse createTransfer(TransferPostRequest transferPostRequest) throws NotFoundException {
+    public TransferPostResponse createTransfer(TransferPostRequest transferPostRequest) {
         if (!transferValidation.validateTransferCreateRequest(transferPostRequest)) {
             throw new IncorrectRequestException("incorrect parameters");
         }
 
         Wallet senderWallet = Optional.ofNullable(walletRepository.getById(transferPostRequest.getSenderWalletId()))
-                .orElseThrow(() -> new NotFoundException("wallet not found by id"));
+                .orElseThrow(() -> new NotFoundException("wallet not found", List.of("id")));
 
         if (!transferValidation.isEnoughtMoneyForTransfer(transferPostRequest)) {
             throw new NotEnoughtMoneyException("not enought money for transfer");
@@ -96,11 +96,11 @@ public class TransferServiceImp implements TransferService {
     private int getReceiverWalletIdWhenUserIsDestination(TransferPostRequest transferPostRequest) {
         User receiverUser;
         if (transferPostRequest.getUserTransferWay() == UserTransferWay.BY_TELEPHONE) {
-            receiverUser = Optional.ofNullable(usersRepository.getByTelephone(transferPostRequest.getReceiverPhone()))
-                    .orElseThrow(() -> new NotFoundException("user not found by phone"));
+            receiverUser = Optional.ofNullable(usersDAO.getByTelephone(transferPostRequest.getReceiverPhone()))
+                    .orElseThrow(() -> new NotFoundException("user not found", List.of("telephoneNumber")));
         } else {
-            receiverUser = Optional.ofNullable(usersRepository.getById(transferPostRequest.getReceiverWalletId()))
-                    .orElseThrow(() -> new NotFoundException("user not found by wallet id"));
+            receiverUser = Optional.ofNullable(usersDAO.getById(transferPostRequest.getReceiverWalletId()))
+                    .orElseThrow(() -> new NotFoundException("user not found", List.of("walletId")));
         }
         return receiverUser.getWallet().getId();
     }
@@ -108,20 +108,20 @@ public class TransferServiceImp implements TransferService {
     @Override
     public TransferGetResponse getTransferById(int transferId, int walletId) {
         Transfer transfer = Optional.ofNullable(transferRepository.getById(transferId))
-                .orElseThrow(() -> new NotFoundException("transfer not found by id"));
+                .orElseThrow(() -> new NotFoundException("transfer not found", List.of("id")));
 
         if (transfer.getSenderWalletId() != walletId && transfer.getReceiverWalletId() != walletId) {
             throw new IncorrectRequestException("incorrect wallet id");
         }
 
-        TransferGetResponseMapper transferGetResponseMapper = new TransferGetResponseMapper(usersRepository);
+        TransferGetResponseMapper transferGetResponseMapper = new TransferGetResponseMapper(usersDAO);
         return transferGetResponseMapper.mapTransferGetResponse(transfer, walletId);
     }
 
     @Override
     public List<TransferGetResponse> getAllTransfersByWalletId(int walletId) {
         List<Transfer> transferList = transferRepository.getAllTransfersByWalletId(walletId);
-        TransferGetResponseMapper transferGetResponseMapper = new TransferGetResponseMapper(usersRepository);
+        TransferGetResponseMapper transferGetResponseMapper = new TransferGetResponseMapper(usersDAO);
         return transferList.stream()
                 .map(transfer -> transferGetResponseMapper.mapTransferGetResponse(transfer, walletId))
                 .collect(Collectors.toList());
@@ -136,7 +136,7 @@ public class TransferServiceImp implements TransferService {
         }
 
         List<Transfer> transferList = transferRepository.getAllTransfersByWalletId(walletId);
-        TransferGetResponseMapper transferGetResponseMapper = new TransferGetResponseMapper(usersRepository);
+        TransferGetResponseMapper transferGetResponseMapper = new TransferGetResponseMapper(usersDAO);
 
         /*вот эту грязь неплохо было бы переделать на function и красивые конструкции*/
         List<TransferGetResponse> transferGetResponseList;
@@ -165,10 +165,10 @@ public class TransferServiceImp implements TransferService {
 class TransferGetResponseMapper {
 
     private Map<Integer, Integer> walletIdAndUserId = new HashMap<>();
-    private UsersRepository usersRepository;
+    private UsersDAO usersDAO;
 
-    TransferGetResponseMapper(UsersRepository usersRepository) {
-        this.usersRepository = usersRepository;
+    TransferGetResponseMapper(UsersDAO usersDAO) {
+        this.usersDAO = usersDAO;
     }
 
     public TransferGetResponse mapTransferGetResponse(Transfer transfer, int walletId) {
@@ -184,7 +184,7 @@ class TransferGetResponseMapper {
         try {
             secondSideUserId = walletIdAndUserId.get(secondSideWalletId);
         } catch (NullPointerException ex) {
-            secondSideUserId = usersRepository.getByWalletId(secondSideWalletId).getId();
+            secondSideUserId = usersDAO.getByWalletId(secondSideWalletId).getId();
         }
 
         return TransferGetResponse.builder()
