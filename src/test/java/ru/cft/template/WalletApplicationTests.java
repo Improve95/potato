@@ -1,6 +1,6 @@
 package ru.cft.template;
 
-import cft.intensive.potato.WalletApplication;
+import ru.improve.potato.WalletApplication;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.test.context.SpringBootTest;
