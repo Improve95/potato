@@ -1,6 +1,6 @@
 package cft.intensive.potato.core.services.wallet;
 
-import cft.intensive.potato.api.dto.user.wallet.WalletGetResponse;
+import cft.intensive.potato.api.dto.wallet.WalletGetResponse;
 
 public interface WalletService {
 

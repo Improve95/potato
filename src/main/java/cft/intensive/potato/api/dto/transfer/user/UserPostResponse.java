@@ -1,4 +1,4 @@
-package cft.intensive.potato.api.dto.user.wallet;
+package cft.intensive.potato.api.dto.transfer.user;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -9,11 +9,7 @@ import lombok.extern.jackson.Jacksonized;
 @Getter
 @Jacksonized
 @ToString
-public class WalletGetResponse {
+public class UserPostResponse {
 
     private final int id;
-
-    private final int balance;
-
-    private final int userId;
 }

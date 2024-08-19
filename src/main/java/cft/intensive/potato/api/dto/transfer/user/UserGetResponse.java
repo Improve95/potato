@@ -1,4 +1,4 @@
-package cft.intensive.potato.api.dto.user;
+package cft.intensive.potato.api.dto.transfer.user;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -9,9 +9,9 @@ import java.time.LocalDateTime;
 
 @Builder
 @Getter
-@ToString
 @Jacksonized
-public class UserPostRequest {
+@ToString
+public class UserGetResponse {
 
     private final String firstName;
 
@@ -22,6 +22,4 @@ public class UserPostRequest {
     private final String email;
 
     private final LocalDateTime birthdate;
-
-    private final String password;
 }

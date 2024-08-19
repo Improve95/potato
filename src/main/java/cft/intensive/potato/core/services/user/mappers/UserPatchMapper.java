@@ -1,7 +1,7 @@
 package cft.intensive.potato.core.services.user.mappers;
 
-import cft.intensive.potato.api.dto.user.UserPostRequest;
-import cft.intensive.potato.api.dto.user.UserPatchRequest;
+import cft.intensive.potato.api.dto.transfer.user.UserPostRequest;
+import cft.intensive.potato.api.dto.transfer.user.UserPatchRequest;
 import cft.intensive.potato.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
