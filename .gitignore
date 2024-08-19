@@ -111,3 +111,6 @@ justFiles
 hs_err_pid*
 replay_pid*
 *.png
+gradle
+images
+postgres
