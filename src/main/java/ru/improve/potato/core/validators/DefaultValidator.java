@@ -2,9 +2,9 @@ package ru.improve.potato.core.validators;
 
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
-import ru.improve.potato.core.exceptions.user.PersonOnCreateException;
+import ru.improve.potato.core.exceptions.OnCreateException;
 
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class DefaultValidator {
@@ -18,11 +18,11 @@ public abstract class DefaultValidator {
                         .append("; ");
             }
 
-            Set<String> fieldsWithError = errors.getFieldErrors().stream()
+            List<String> fieldsWithError = errors.getFieldErrors().stream()
                     .map(fieldError -> fieldError.getField())
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toList());
 
-            throw new PersonOnCreateException(errorMsg.toString(), fieldsWithError);
+            throw new OnCreateException(errorMsg.toString(), fieldsWithError);
         }
     }
 }

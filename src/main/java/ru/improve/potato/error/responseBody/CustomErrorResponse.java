@@ -1,4 +1,4 @@
-package ru.improve.potato.error;
+package ru.improve.potato.error.responseBody;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,7 +10,7 @@ import java.util.Set;
 @Getter
 @Setter
 @AllArgsConstructor
-public class ErrorResponse {
+public class CustomErrorResponse {
 
     private String message;
 

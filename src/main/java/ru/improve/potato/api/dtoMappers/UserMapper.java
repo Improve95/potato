@@ -1,21 +1,24 @@
 package ru.improve.potato.api.dtoMappers;
 
-import ru.improve.potato.api.dto.user.UserPostRequest;
-import ru.improve.potato.api.dto.user.UserPatchRequest;
-import ru.improve.potato.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
-import org.springframework.stereotype.Component;
+import ru.improve.potato.api.dto.user.UserGetResponse;
+import ru.improve.potato.api.dto.user.UserPatchRequest;
+import ru.improve.potato.api.dto.user.UserPostRequest;
+import ru.improve.potato.api.dto.user.UserPostResponse;
+import ru.improve.potato.model.User;
 
-@Component(value = "userPatchMapper")
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface UserMapper {
-    void updateUserFromDto(UserPatchRequest userPatchRequest, @MappingTarget User user);
 
-    void updateUserFromCreateUserRequest(UserPostRequest userPostRequest, @MappingTarget User user);
+    User toUser(UserPostRequest userPostRequest);
 
+    User toUser(UserPatchRequest userPatchRequest);
 
+    UserPostResponse toUserPostResponse(User user);
+
+    UserGetResponse toUserGetResponse(User user);
+
+    void patchUserFromPatchUserRequest(UserPatchRequest userPatchRequest, @MappingTarget User user);
 }

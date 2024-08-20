@@ -4,9 +4,9 @@ import ru.improve.potato.error.CustomPotatoException;
 
 import java.util.List;
 
-public class NotFoundException extends CustomPotatoException {
+public class AlreadyExistException extends CustomPotatoException {
 
-    public NotFoundException(String message, List<String> fieldsWithError) {
+    public AlreadyExistException(String message, List<String> fieldsWithError) {
         super(message, fieldsWithError);
     }
 }

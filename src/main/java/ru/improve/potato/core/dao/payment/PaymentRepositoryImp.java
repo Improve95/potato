@@ -25,7 +25,8 @@ public class PaymentRepositoryImp implements PaymentRepository {
     @Override
     public UUID addNewPayment(Payment payment) {
         em.persist(payment);
-        return payment.getPaymentId();
+//        return payment.getPaymentId();
+        return null;
     }
 
     @Override
