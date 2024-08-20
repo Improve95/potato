@@ -1,7 +1,7 @@
-package ru.improve.potato.core.dao.repository;
+package ru.improve.potato.core.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import ru.improve.potato.model.User;
+import ru.improve.potato.model.user.User;
 import ru.improve.potato.model.Wallet;
 
 public interface UserRepository extends JpaRepository<User, Integer> {

@@ -1,4 +1,4 @@
-package ru.improve.potato.api.dto.user;
+package ru.improve.potato.api.dto.auth;
 
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -20,7 +20,7 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserPostRequest {
+public class SingUpRequest {
 
     @NotEmpty(message = "firstName cannot be empty")
     @NotBlank(message = "firstName cannot be include blank")
@@ -33,7 +33,7 @@ public class UserPostRequest {
     private String secondName;
 
     @NotEmpty(message = "telephoneNumber cannot be empty")
-    @Pattern(regexp = "^[7-9]\\d{10}$")
+    @Pattern(regexp = "^[7-9]\\d{10}$", message = "phone bad input")
     private String phone;
 
     @NotEmpty(message = "email cannot be empty")

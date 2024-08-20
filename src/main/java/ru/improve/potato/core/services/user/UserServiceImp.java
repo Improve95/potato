@@ -5,12 +5,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import ru.improve.potato.api.dto.user.UserPatchRequest;
-import ru.improve.potato.api.dto.user.UserPostResponse;
+import ru.improve.potato.api.dto.auth.SignUpResponse;
 import ru.improve.potato.api.dtoMappers.UserMapper;
-import ru.improve.potato.core.dao.repository.UserRepository;
+import ru.improve.potato.core.repositories.UserRepository;
 import ru.improve.potato.core.exceptions.AlreadyExistException;
 import ru.improve.potato.core.exceptions.NotFoundException;
-import ru.improve.potato.model.User;
+import ru.improve.potato.model.user.User;
 import ru.improve.potato.model.Wallet;
 
 import java.util.List;
@@ -25,7 +25,7 @@ public class UserServiceImp implements UserService {
 
     @Transactional
     @Override
-    public UserPostResponse save(User user) {
+    public SignUpResponse save(User user) {
 
         Wallet wallet = new Wallet(1000, user);
         user.setWallet(wallet);

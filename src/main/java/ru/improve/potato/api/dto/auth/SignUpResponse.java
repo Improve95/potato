@@ -1,4 +1,4 @@
-package ru.improve.potato.api.dto.user;
+package ru.improve.potato.api.dto.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +13,7 @@ import lombok.extern.jackson.Jacksonized;
 @NoArgsConstructor
 @Builder
 @Jacksonized
-public class UserPostResponse {
+public class SignUpResponse {
 
     private int id;
 }

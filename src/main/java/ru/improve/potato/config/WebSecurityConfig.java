@@ -1,6 +1,10 @@
 package ru.improve.potato.config;
 
-//@Secur
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+
+@EnableWebSecurity
 public class WebSecurityConfig {
 
+//    @Bean
+//    public HttpReq
 }

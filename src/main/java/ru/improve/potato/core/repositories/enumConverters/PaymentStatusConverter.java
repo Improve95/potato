@@ -1,4 +1,4 @@
-package ru.improve.potato.core.dao.repository.enumConverters;
+package ru.improve.potato.core.repositories.enumConverters;
 
 import ru.improve.potato.model.payment.PaymentStatus;
 import jakarta.persistence.AttributeConverter;

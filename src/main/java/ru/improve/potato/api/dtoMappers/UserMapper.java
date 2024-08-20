@@ -3,20 +3,20 @@ package ru.improve.potato.api.dtoMappers;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
+import ru.improve.potato.api.dto.auth.SignUpResponse;
 import ru.improve.potato.api.dto.user.UserGetResponse;
 import ru.improve.potato.api.dto.user.UserPatchRequest;
-import ru.improve.potato.api.dto.user.UserPostRequest;
-import ru.improve.potato.api.dto.user.UserPostResponse;
-import ru.improve.potato.model.User;
+import ru.improve.potato.api.dto.auth.SingUpRequest;
+import ru.improve.potato.model.user.User;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface UserMapper {
 
-    User toUser(UserPostRequest userPostRequest);
+    User toUser(SingUpRequest singUpRequest);
 
     User toUser(UserPatchRequest userPatchRequest);
 
-    UserPostResponse toUserPostResponse(User user);
+    SignUpResponse toUserPostResponse(User user);
 
     UserGetResponse toUserGetResponse(User user);
 

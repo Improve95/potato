@@ -11,7 +11,7 @@ import ru.improve.potato.core.dao.transfer.TransferRepository;
 import ru.improve.potato.core.dao.wallet.WalletRepository;
 import ru.improve.potato.core.exceptions.NotFoundException;
 import ru.improve.potato.core.validators.transfer.TransferValidation;
-import ru.improve.potato.model.User;
+import ru.improve.potato.model.user.User;
 import ru.improve.potato.model.Wallet;
 import ru.improve.potato.model.transfer.Transfer;
 import ru.improve.potato.model.transfer.TransferType;

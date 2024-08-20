@@ -114,3 +114,6 @@ replay_pid*
 gradle
 images
 postgres
+
+# secret token file #
+src/main/resources/signingKey.properties
