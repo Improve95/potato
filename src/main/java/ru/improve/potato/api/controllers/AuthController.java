@@ -9,12 +9,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.improve.potato.api.dto.auth.LoginRequest;
+import ru.improve.potato.api.dto.auth.LoginResponse;
 import ru.improve.potato.api.dto.auth.SignUpResponse;
 import ru.improve.potato.api.dto.auth.SingUpRequest;
-import ru.improve.potato.api.dtoMappers.UserMapper;
-import ru.improve.potato.core.services.user.UserService;
+import ru.improve.potato.core.services.security.AuthenticationService;
 import ru.improve.potato.core.validators.auth.AuthValidator;
-import ru.improve.potato.core.validators.user.UserValidator;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,25 +21,24 @@ import ru.improve.potato.core.validators.user.UserValidator;
 @Slf4j
 public class AuthController {
 
-    private final UserService userService;
-    private final UserValidator userValidator;
-    private final UserMapper userMapper;
-
+    private final AuthenticationService authenticationService;
     private final AuthValidator authValidator;
 
     @PostMapping("/signup")
-    public SignUpResponse addUser(@RequestBody @Valid SingUpRequest singUpRequest,
+    public SignUpResponse signUp(@RequestBody @Valid SingUpRequest singUpRequest,
                                   BindingResult bindingResult) {
 
-        userValidator.validate(singUpRequest, bindingResult);
+        authValidator.validate(singUpRequest, bindingResult);
 
-        log.info("request arrived - add user: {}", singUpRequest);
-        return userService.save(userMapper.toUser(singUpRequest));
+        return authenticationService.signUp(singUpRequest);
     }
 
     @PostMapping("/login")
-    public void login(@RequestBody @Valid LoginRequest loginRequest, BindingResult bindingResult) {
+    public LoginResponse login(@RequestBody @Valid LoginRequest loginRequest,
+                               BindingResult bindingResult) {
 
         authValidator.validate(loginRequest, bindingResult);
+
+        return authenticationService.login(loginRequest);
     }
 }

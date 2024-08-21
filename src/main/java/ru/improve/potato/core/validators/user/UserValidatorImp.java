@@ -11,11 +11,8 @@ public class UserValidatorImp extends DefaultValidator implements UserValidator 
 
     @Override
     public boolean supports(Class<?> clazz) {
-        if (clazz.equals(SingUpRequest.class) ||
-                clazz.equals(UserPatchRequest.class)) {
-            return true;
-        }
-        return false;
+        return (clazz.equals(SingUpRequest.class) ||
+                clazz.equals(UserPatchRequest.class));
     }
 
     @Override

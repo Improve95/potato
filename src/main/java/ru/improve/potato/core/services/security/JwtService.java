@@ -1,4 +1,4 @@
-package ru.improve.potato.core.services.jwt;
+package ru.improve.potato.core.services.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;

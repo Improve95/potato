@@ -16,7 +16,7 @@ public interface UserMapper {
 
     User toUser(UserPatchRequest userPatchRequest);
 
-    SignUpResponse toUserPostResponse(User user);
+    SignUpResponse toUserSignUpResponse(User user);
 
     UserGetResponse toUserGetResponse(User user);
 

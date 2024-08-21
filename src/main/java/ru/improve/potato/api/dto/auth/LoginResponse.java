@@ -7,15 +7,17 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.jackson.Jacksonized;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Jacksonized
-public class SignUpResponse {
+public class LoginResponse {
 
-    private int id;
+    private UUID sessionId;
 
     private String token;
 }
