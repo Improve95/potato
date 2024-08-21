@@ -43,11 +43,14 @@ public class AuthenticationService {
     public LoginResponse login(LoginRequest loginRequest) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginRequest.getPhone(),
-                loginRequest.getPhone()
+                loginRequest.getPassword()
         ));
+
+        User user = userService.getByPhone(loginRequest.getPhone());
 
         return LoginResponse.builder()
                 .sessionId(UUID.randomUUID())
+                .token(jwtService.generateToken(user))
                 .build();
     }
 

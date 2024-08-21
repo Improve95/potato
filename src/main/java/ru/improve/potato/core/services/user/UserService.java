@@ -10,5 +10,7 @@ public interface UserService {
 
     User getById(int id);
 
+    User getByPhone(String phone);
+
     void patchById(UserPatchRequest userPatchRequest, int id);
 }

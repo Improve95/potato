@@ -49,6 +49,12 @@ public class UserServiceImp implements UserService {
 
     }
 
+    @Override
+    public User getByPhone(String phone) {
+        return userRepository.findByPhone(phone)
+                .orElseThrow(() -> new NotFoundException("user not found", List.of("phone")));
+    }
+
     @Transactional
     @Override
     public void patchById(UserPatchRequest userPatchRequest, int id) {

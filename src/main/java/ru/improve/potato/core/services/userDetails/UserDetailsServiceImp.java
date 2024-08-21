@@ -9,7 +9,6 @@ import ru.improve.potato.core.exceptions.NotFoundException;
 import ru.improve.potato.core.repositories.UserRepository;
 
 import java.util.Collections;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,7 +18,7 @@ public class UserDetailsServiceImp implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String phone) throws UsernameNotFoundException {
-        return Optional.ofNullable(userRepository.findByPhone(phone))
+        return userRepository.findByPhone(phone)
                 .orElseThrow(() -> new NotFoundException("user not found", Collections.singletonList("phone")));
     }
 }
