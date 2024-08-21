@@ -21,7 +21,7 @@ public class UserGetResponse {
 
     private String secondName;
 
-    private String telephoneNumber;
+    private String phone;
 
     private String email;
 
