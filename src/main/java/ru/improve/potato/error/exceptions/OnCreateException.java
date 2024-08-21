@@ -1,4 +1,4 @@
-package ru.improve.potato.exceptions;
+package ru.improve.potato.error.exceptions;
 
 import ru.improve.potato.error.CustomPotatoException;
 

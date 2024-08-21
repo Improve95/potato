@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 import ru.improve.potato.dto.auth.SignUpResponse;
 import ru.improve.potato.dto.user.UserPatchRequest;
 import ru.improve.potato.mappers.UserMapper;
-import ru.improve.potato.exceptions.AlreadyExistException;
-import ru.improve.potato.exceptions.NotFoundException;
+import ru.improve.potato.error.exceptions.AlreadyExistException;
+import ru.improve.potato.error.exceptions.NotFoundException;
 import ru.improve.potato.repositories.UserRepository;
 import ru.improve.potato.models.Wallet;
 import ru.improve.potato.models.user.Role;
@@ -50,8 +50,8 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public User getByPhone(String phone) {
-        return userRepository.findByPhone(phone)
+    public User getByEmail(String email) {
+        return userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("user not found", List.of("phone")));
     }
 

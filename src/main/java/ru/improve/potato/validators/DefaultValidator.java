@@ -2,7 +2,7 @@ package ru.improve.potato.validators;
 
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
-import ru.improve.potato.exceptions.OnCreateException;
+import ru.improve.potato.error.exceptions.OnCreateException;
 
 import java.util.List;
 import java.util.stream.Collectors;

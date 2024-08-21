@@ -1,6 +1,5 @@
 package ru.improve.potato.security;
 
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,15 +37,10 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         String token = authHead.substring(BEARER_PREFIX.length());
-        /*if (token.isEmpty() || token.isBlank()) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST,
-                    "Invalid JWT Token in Bearer Header");
-            filterChain.doFilter(request, response);
-        }*/
 
         try {
-            String phone = jwtService.verifyTokenAndGetSubject(token);
-            UserDetails userDetails = userDetailsService.loadUserByUsername(phone);
+            String email = jwtService.verifyTokenAndGetSubject(token);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                     userDetails,
@@ -56,9 +50,8 @@ public class JwtFilter extends OncePerRequestFilter {
             if (SecurityContextHolder.getContext().getAuthentication() == null) {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
-        } catch (JWTVerificationException ex) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST,
-                    "Invalid JWT Token");
+        } catch (Exception ex) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid JWT Token");
         }
 
         filterChain.doFilter(request, response);

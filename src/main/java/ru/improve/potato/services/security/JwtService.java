@@ -1,49 +1,50 @@
 package ru.improve.potato.services.security;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.DecodedJWT;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
+import java.security.Key;
 import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
 public class JwtService {
 
-    @Value("${secret.token}")
-    private String secretKey;
+    @Value("${signing.key}")
+    private String jwtSigningKey;
 
-    public String generateToken(UserDetails userDetails) {
-        Instant nowTime = new Date().toInstant();
-        Instant expirationTime = nowTime.plusSeconds(60 * 60);
+    public String generateToken(int userId, UserDetails userDetails) {
+        Date nowTime = new Date();
+        Date expirationTime = new Date(nowTime.getTime() + 1000 * 60 * 60);
 
-        return JWT.create()
-                .withSubject(userDetails.getUsername())
-                .withIssuedAt(nowTime)
-                .withExpiresAt(expirationTime)
-                .sign(Algorithm.HMAC256(secretKey));
-    }
-
-    public boolean tokenIsExpired(String token) {
-        return getExpirationTime(token).isBefore(new Date().toInstant());
-    }
-
-    public Instant getExpirationTime(String token) {
-        DecodedJWT decodedJWT = JWT.decode(token);
-        return decodedJWT.getExpiresAt().toInstant();
+        return Jwts.builder()
+                .setSubject(userDetails.getUsername())
+                .claim("id", Integer.toString(userId))
+                .setIssuedAt(nowTime)
+                .setExpiration(expirationTime)
+                .signWith(getJwtSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
     }
 
     public String verifyTokenAndGetSubject(String token) {
-        JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256(secretKey))
-                .build();
+        Jws<Claims> claims = Jwts.parserBuilder()
+                .setSigningKey(getJwtSigningKey())
+                .build()
+                .parseClaimsJws(token);
+//        claims.getBody().getExpiration().after(new Date())
+        return claims.getBody().getSubject();
+    }
 
-        DecodedJWT decodedJWT = jwtVerifier.verify(token);
-        return decodedJWT.getSubject();
+    private Key getJwtSigningKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(jwtSigningKey);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 }

@@ -22,16 +22,21 @@ public class AuthProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        String phone = authentication.getName();
+        String email = authentication.getName();
         String password = authentication.getCredentials().toString();
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(phone);
+        UserDetails userDetails;
+        try {
+            userDetails = userDetailsService.loadUserByUsername(email);
+        }  catch (Exception ex) {
+            throw new BadCredentialsException("incorrect phone or password");
+        }
 
         if (passwordEncoder.matches(password, userDetails.getPassword())) {
 //            String accessToken = jwtService.generateToken(userDetails);
             return new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
         } else {
-            throw new BadCredentialsException("");
+            throw new BadCredentialsException("incorrect phone or password");
         }
     }
 

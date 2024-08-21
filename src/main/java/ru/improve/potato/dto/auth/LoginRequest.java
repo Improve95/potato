@@ -17,7 +17,7 @@ import lombok.extern.jackson.Jacksonized;
 public class LoginRequest {
 
     @NotEmpty(message = "telephoneNumber cannot be empty")
-    private String phone;
+    private String email;
 
     @NotEmpty(message = "password cannot be empty")
     private String password;

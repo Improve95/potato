@@ -5,7 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import ru.improve.potato.exceptions.NotFoundException;
+import ru.improve.potato.error.exceptions.NotFoundException;
 import ru.improve.potato.repositories.UserRepository;
 
 import java.util.Collections;
@@ -17,8 +17,8 @@ public class UserDetailsServiceImp implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String phone) throws UsernameNotFoundException {
-        return userRepository.findByPhone(phone)
-                .orElseThrow(() -> new NotFoundException("user not found", Collections.singletonList("phone")));
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("user not found", Collections.singletonList("email")));
     }
 }

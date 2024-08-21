@@ -61,13 +61,13 @@ public class User implements UserDetails {
     }
 
     @Override
-    public String getPassword() {
-        return this.password;
+    public String getUsername() {
+        return this.email;
     }
 
     @Override
-    public String getUsername() {
-        return this.phone;
+    public String getPassword() {
+        return this.password;
     }
 
     @Override
