@@ -5,8 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.improve.potato.core.exceptions.AlreadyExistException;
-import ru.improve.potato.core.exceptions.OnCreateException;
+import ru.improve.potato.exceptions.AlreadyExistException;
+import ru.improve.potato.exceptions.OnCreateException;
 import ru.improve.potato.error.responseBody.CustomErrorResponse;
 import ru.improve.potato.error.responseBody.DefaultErrorResponse;
 

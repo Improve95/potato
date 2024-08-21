@@ -12,7 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import ru.improve.potato.core.services.security.JwtService;
+import ru.improve.potato.services.security.JwtService;
 
 import java.io.IOException;
 
