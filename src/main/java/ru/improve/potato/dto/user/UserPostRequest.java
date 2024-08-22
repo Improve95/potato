@@ -1,4 +1,4 @@
-package ru.improve.potato.dto.auth;
+package ru.improve.potato.dto.user;
 
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -20,7 +20,7 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SingUpRequest {
+public class UserPostRequest {
 
     @NotEmpty(message = "firstName cannot be empty")
     @NotBlank(message = "firstName cannot be include blank")

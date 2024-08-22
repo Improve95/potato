@@ -1,4 +1,4 @@
-package ru.improve.potato.dto.auth;
+package ru.improve.potato.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,11 +15,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 @Jacksonized
-public class SignUpResponse {
+public class UserPostResponse {
 
     private UUID id;
-
-    private String accessToken;
-
-    private String refreshToken;
 }

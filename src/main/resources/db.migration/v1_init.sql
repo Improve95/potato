@@ -11,6 +11,8 @@ create table users (
                        role varchar(20) not null
 );
 
+delete from users where phone='77777777778';
+
 create table session (
                          id uuid not null ,
                          created_at timestamp without time zone not null ,
@@ -27,3 +29,7 @@ create table wallets (
                          balance int not null ,
                          user_id uuid not null references users("id")
 );
+
+alter table wallets
+add constraint user_id_constraint
+foreign key (user_id) references users(id) on delete cascade

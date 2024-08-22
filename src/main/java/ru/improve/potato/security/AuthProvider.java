@@ -10,7 +10,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import ru.improve.potato.services.security.JwtService;
 
 @Component
 @RequiredArgsConstructor
@@ -18,7 +17,7 @@ public class AuthProvider implements AuthenticationProvider {
 
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
+//    private final JwtService jwtService;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {

@@ -3,8 +3,9 @@ package ru.improve.potato.services.user;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.improve.potato.dto.auth.SignUpResponse;
+import ru.improve.potato.dto.user.UserPostResponse;
 import ru.improve.potato.dto.user.UserPatchRequest;
 import ru.improve.potato.mappers.UserMapper;
 import ru.improve.potato.error.working.exceptions.AlreadyExistException;
@@ -21,20 +22,19 @@ import java.util.List;
 public class UserServiceImp implements UserService {
 
     private final UserRepository userRepository;
-
     private final UserMapper userMapper;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     @Override
-    public SignUpResponse save(User user) {
+    public UserPostResponse save(User user) {
 
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(Role.USER);
 
         Wallet wallet = new Wallet(1000, user);
         user.setWallet(wallet);
-
-        System.out.println(user);
-        System.out.println(wallet.getUser());
 
         try {
             userRepository.save(user);
@@ -42,7 +42,7 @@ public class UserServiceImp implements UserService {
             throw new AlreadyExistException(ex.getMessage(), List.of("phone"));
         }
 
-        return userMapper.toUserSignUpResponse(user);
+        return userMapper.toUserPostResponse(user);
     }
 
     @Override

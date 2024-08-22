@@ -7,8 +7,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.improve.potato.dto.auth.LoginRequest;
 import ru.improve.potato.dto.auth.LoginResponse;
-import ru.improve.potato.dto.auth.SignUpResponse;
-import ru.improve.potato.dto.auth.SingUpRequest;
+import ru.improve.potato.dto.user.UserPostResponse;
+import ru.improve.potato.dto.user.UserPostRequest;
 import ru.improve.potato.mappers.UserMapper;
 import ru.improve.potato.models.user.User;
 import ru.improve.potato.services.user.UserService;
@@ -26,15 +26,16 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
-    public SignUpResponse signUp(SingUpRequest singUpRequest) {
-        User user = userMapper.toUser(singUpRequest);
-        user.setPassword(passwordEncoder.encode(singUpRequest.getPassword()));
+    public UserPostResponse signUp(UserPostRequest userPostRequest) {
+        User user = userMapper.toUser(userPostRequest);
+        user.setPassword(passwordEncoder.encode(userPostRequest.getPassword()));
 
-        SignUpResponse signUpResponse = userService.save(user);
-        signUpResponse.setAccessToken(jwtService.generateAccessToken(user.getId(), user.getEmail()));
-        signUpResponse.setRefreshToken(jwtService.generateRefreshToken(user.getId(), user.getEmail()));
+//        UserPostResponse userPostResponse = userService.save(user);
+//        userPostResponse.setAccessToken(jwtService.generateAccessToken(user.getId(), user.getEmail()));
+//        userPostResponse.setRefreshToken(jwtService.generateRefreshToken(user.getId(), user.getEmail()));
 
-        return signUpResponse;
+//        return userPostResponse;
+        return null;
     }
 
     public LoginResponse login(LoginRequest loginRequest) {
