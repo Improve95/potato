@@ -1,20 +1,14 @@
-package ru.improve.potato.dto.auth;
+package ru.improve.potato.dto.session;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.extern.jackson.Jacksonized;
 
 import java.util.UUID;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-@Jacksonized
 public class LoginResponse {
 
     private UUID sessionId;

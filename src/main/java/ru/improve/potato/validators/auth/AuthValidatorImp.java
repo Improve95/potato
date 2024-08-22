@@ -2,7 +2,7 @@ package ru.improve.potato.validators.auth;
 
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
-import ru.improve.potato.dto.auth.LoginRequest;
+import ru.improve.potato.dto.session.LoginRequest;
 import ru.improve.potato.dto.user.UserPostRequest;
 import ru.improve.potato.validators.DefaultValidator;
 
