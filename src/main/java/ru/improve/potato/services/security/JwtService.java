@@ -6,9 +6,9 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -18,16 +18,41 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtService {
 
-    @Value("${signing.key}")
+    @Value("${token.secret}")
     private String jwtSigningKey;
+    
+    @Value("${token.access.ttl}")
+    private int accessTokenTimeOfLife;
 
-    public String generateToken(int userId, UserDetails userDetails) {
+    @Value("${token.refresh.ttl}")
+    private int refreshTokenTimeOfLife;
+
+    @PostConstruct
+    private void init() {
+        this.accessTokenTimeOfLife = accessTokenTimeOfLife * 1000;
+        this.refreshTokenTimeOfLife = refreshTokenTimeOfLife * 1000;
+    }
+
+    public String generateAccessToken(int userId, String email) {
         Date nowTime = new Date();
-        Date expirationTime = new Date(nowTime.getTime() + 1000 * 60 * 60);
+        Date expirationTime = new Date(nowTime.getTime() + accessTokenTimeOfLife);
 
         return Jwts.builder()
-                .setSubject(userDetails.getUsername())
+                .setSubject(email)
                 .claim("id", Integer.toString(userId))
+                .setIssuedAt(nowTime)
+                .setExpiration(expirationTime)
+                .signWith(getJwtSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    public String generateRefreshToken(int userId, String email) {
+        Date nowTime = new Date();
+        Date expirationTime = new Date(nowTime.getTime() + refreshTokenTimeOfLife);
+
+        return Jwts.builder()
+                .claim("id", Integer.toString(userId))
+                .claim("email", email)
                 .setIssuedAt(nowTime)
                 .setExpiration(expirationTime)
                 .signWith(getJwtSigningKey(), SignatureAlgorithm.HS256)
@@ -40,8 +65,7 @@ public class JwtService {
                     .setSigningKey(getJwtSigningKey())
                     .build()
                     .parseClaimsJws(token);
-
-            return claims.getBody().getExpiration().after(new Date());
+            return isExpired(claims.getBody().getExpiration());
         } catch (Exception ex) {
             return false;
         }
@@ -54,6 +78,10 @@ public class JwtService {
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
+    }
+
+    private boolean isExpired(Date expirationDate) {
+        return expirationDate.after(new Date());
     }
 
     private Key getJwtSigningKey() {

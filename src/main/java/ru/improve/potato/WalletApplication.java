@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
 @EnableTransactionManagement
-@PropertySource("classpath:secretToken.properties")
+@PropertySource("classpath:security.properties")
 public class WalletApplication {
 
 	public static void main(String[] args) {

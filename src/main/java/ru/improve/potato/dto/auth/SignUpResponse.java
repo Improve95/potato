@@ -17,5 +17,7 @@ public class SignUpResponse {
 
     private int id;
 
-    private String token;
+    private String accessToken;
+
+    private String refreshToken;
 }

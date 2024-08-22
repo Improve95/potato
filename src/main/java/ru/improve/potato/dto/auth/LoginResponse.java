@@ -19,5 +19,7 @@ public class LoginResponse {
 
     private UUID sessionId;
 
-    private String token;
+    private String accessToken;
+
+    private String refreshToken;
 }

@@ -31,7 +31,9 @@ public class AuthenticationService {
         user.setPassword(passwordEncoder.encode(singUpRequest.getPassword()));
 
         SignUpResponse signUpResponse = userService.save(user);
-        signUpResponse.setToken(jwtService.generateToken(user.getId(), user));
+        signUpResponse.setAccessToken(jwtService.generateAccessToken(user.getId(), user.getEmail()));
+        signUpResponse.setRefreshToken(jwtService.generateRefreshToken(user.getId(), user.getEmail()));
+
         return signUpResponse;
     }
 
@@ -45,7 +47,8 @@ public class AuthenticationService {
 
         return LoginResponse.builder()
                 .sessionId(UUID.randomUUID())
-                .token(jwtService.generateToken(user.getId(), user))
+                .accessToken(jwtService.generateAccessToken(user.getId(), user.getEmail()))
+                .refreshToken(jwtService.generateRefreshToken(user.getId(), user.getEmail()))
                 .build();
     }
 
