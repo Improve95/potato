@@ -1,13 +1,14 @@
-package ru.improve.potato.error;
+package ru.improve.potato.error.working;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.improve.potato.error.exceptions.AlreadyExistException;
-import ru.improve.potato.error.exceptions.OnCreateException;
+import ru.improve.potato.error.working.exceptions.AlreadyExistException;
+import ru.improve.potato.error.working.exceptions.OnCreateException;
 import ru.improve.potato.error.responseBody.CustomErrorResponse;
 import ru.improve.potato.error.responseBody.DefaultErrorResponse;
 
@@ -20,7 +21,6 @@ public class PotatoExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<DefaultErrorResponse> handleAllExceptions(Exception ex) {
         DefaultErrorResponse defaultErrorResponse = new DefaultErrorResponse(ex.getMessage());
-        ex.printStackTrace();
         return new ResponseEntity<>(defaultErrorResponse, determineHttpStatus(ex));
     }
 
@@ -39,6 +39,10 @@ public class PotatoExceptionHandler {
         }
 
         if (ex instanceof BadCredentialsException) {
+            return HttpStatus.FORBIDDEN;
+        }
+
+        if (ex instanceof AuthenticationException) {
             return HttpStatus.FORBIDDEN;
         }
 

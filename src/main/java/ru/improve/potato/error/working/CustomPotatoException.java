@@ -1,4 +1,4 @@
-package ru.improve.potato.error;
+package ru.improve.potato.error.working;
 
 import lombok.Getter;
 import lombok.Setter;

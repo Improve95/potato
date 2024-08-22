@@ -34,13 +34,26 @@ public class JwtService {
                 .compact();
     }
 
-    public String verifyTokenAndGetSubject(String token) {
-        Jws<Claims> claims = Jwts.parserBuilder()
+    public boolean verifyToken(String token) {
+        try {
+            Jws<Claims> claims = Jwts.parserBuilder()
+                    .setSigningKey(getJwtSigningKey())
+                    .build()
+                    .parseClaimsJws(token);
+
+            return claims.getBody().getExpiration().after(new Date());
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+
+    public String extractEmail(String token) {
+        return Jwts.parserBuilder()
                 .setSigningKey(getJwtSigningKey())
                 .build()
-                .parseClaimsJws(token);
-//        claims.getBody().getExpiration().after(new Date())
-        return claims.getBody().getSubject();
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
     }
 
     private Key getJwtSigningKey() {

@@ -14,6 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import ru.improve.potato.error.security.RestAuthenticationEntryPoint;
 
 import java.util.List;
 
@@ -26,6 +27,8 @@ public class SecurityConfig {
     private final AuthenticationProvider authenticationProvider;
 
     private final JwtFilter jwtFilter;
+
+    private final RestAuthenticationEntryPoint authEntryPoint;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
@@ -46,9 +49,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/auth/**").permitAll()
                         .anyRequest().authenticated())
+                .exceptionHandling(configurer -> {
+                    configurer.authenticationEntryPoint(authEntryPoint);
+                })
                 .sessionManagement(manager -> manager
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                        .maximumSessions(2))
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 

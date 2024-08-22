@@ -29,14 +29,14 @@ public class AuthProvider implements AuthenticationProvider {
         try {
             userDetails = userDetailsService.loadUserByUsername(email);
         }  catch (Exception ex) {
-            throw new BadCredentialsException("incorrect phone or password");
+            throw new BadCredentialsException("incorrect email or password");
         }
 
         if (passwordEncoder.matches(password, userDetails.getPassword())) {
 //            String accessToken = jwtService.generateToken(userDetails);
             return new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
         } else {
-            throw new BadCredentialsException("incorrect phone or password");
+            throw new BadCredentialsException("incorrect email or password");
         }
     }
 

@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +18,7 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtFilter extends OncePerRequestFilter {
 
     private final String HEADER_NAME = "Authorization";
@@ -38,22 +40,23 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String token = authHead.substring(BEARER_PREFIX.length());
 
-        try {
-            String email = jwtService.verifyTokenAndGetSubject(token);
-            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+        if (token != null && jwtService.verifyToken(token)) {
+            try {
+                String email = jwtService.extractEmail(token);
+                UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
-            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                    userDetails,
-                    userDetails.getPassword(),
-                    userDetails.getAuthorities());
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                        userDetails,
+                        userDetails.getPassword(),
+                        userDetails.getAuthorities());
 
-            if (SecurityContextHolder.getContext().getAuthentication() == null) {
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                if (SecurityContextHolder.getContext().getAuthentication() == null) {
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
+            } catch (Exception ex) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid JWT Token");
             }
-        } catch (Exception ex) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid JWT Token");
         }
-
         filterChain.doFilter(request, response);
     }
 }
