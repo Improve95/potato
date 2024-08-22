@@ -33,6 +33,9 @@ public class UserServiceImp implements UserService {
         Wallet wallet = new Wallet(1000, user);
         user.setWallet(wallet);
 
+        System.out.println(user);
+        System.out.println(wallet.getUser());
+
         try {
             userRepository.save(user);
         } catch (DataIntegrityViolationException ex) {
@@ -46,7 +49,6 @@ public class UserServiceImp implements UserService {
     public User getById(int id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("user not found", List.of("id")));
-
     }
 
     @Override

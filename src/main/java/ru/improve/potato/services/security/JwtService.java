@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -33,25 +34,25 @@ public class JwtService {
         this.refreshTokenTimeOfLife = refreshTokenTimeOfLife * 1000;
     }
 
-    public String generateAccessToken(int userId, String email) {
+    public String generateAccessToken(UUID userId, String email) {
         Date nowTime = new Date();
         Date expirationTime = new Date(nowTime.getTime() + accessTokenTimeOfLife);
 
         return Jwts.builder()
                 .setSubject(email)
-                .claim("id", Integer.toString(userId))
+                .claim("id", userId)
                 .setIssuedAt(nowTime)
                 .setExpiration(expirationTime)
                 .signWith(getJwtSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public String generateRefreshToken(int userId, String email) {
+    public String generateRefreshToken(UUID userId, String email) {
         Date nowTime = new Date();
         Date expirationTime = new Date(nowTime.getTime() + refreshTokenTimeOfLife);
 
         return Jwts.builder()
-                .claim("id", Integer.toString(userId))
+                .claim("id", userId)
                 .claim("email", email)
                 .setIssuedAt(nowTime)
                 .setExpiration(expirationTime)

@@ -21,6 +21,7 @@ public class PotatoExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<DefaultErrorResponse> handleAllExceptions(Exception ex) {
         DefaultErrorResponse defaultErrorResponse = new DefaultErrorResponse(ex.getMessage());
+//        ex.printStackTrace();
         return new ResponseEntity<>(defaultErrorResponse, determineHttpStatus(ex));
     }
 

@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.jackson.Jacksonized;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -15,7 +17,7 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 public class SignUpResponse {
 
-    private int id;
+    private UUID id;
 
     private String accessToken;
 

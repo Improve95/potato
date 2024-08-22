@@ -21,6 +21,7 @@ import ru.improve.potato.models.Wallet;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.UUID;
 
 @Entity
 @Table(name = "users")
@@ -32,8 +33,8 @@ import java.util.Collection;
 public class User implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(name = "first_name")
     private String firstName;
