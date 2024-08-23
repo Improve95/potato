@@ -30,8 +30,8 @@ public class SessionServiceImp implements SessionService {
     }
 
     @Override
-    public Session getSessionByRefreshToken(String accessToken) {
-        return sessionRepository.findByAccessToken(accessToken).orElse(null);
+    public Session getSessionByRefreshToken(String refreshToken) {
+        return sessionRepository.findByRefreshToken(refreshToken).orElse(null);
     }
 
     @Transactional

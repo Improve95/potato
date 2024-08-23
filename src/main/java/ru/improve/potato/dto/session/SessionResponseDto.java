@@ -12,7 +12,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class SessionResponseDto {
 
-    private UUID sessionId;
+    private UUID id;
 
     private String accessToken;
 

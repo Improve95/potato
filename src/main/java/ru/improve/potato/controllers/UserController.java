@@ -13,11 +13,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.improve.potato.dto.user.UserGetRequest;
 import ru.improve.potato.dto.user.UserGetResponse;
 import ru.improve.potato.dto.user.UserPatchRequest;
 import ru.improve.potato.dto.user.UserPostRequest;
 import ru.improve.potato.dto.user.UserPostResponse;
 import ru.improve.potato.mappers.UserMapper;
+import ru.improve.potato.models.User;
 import ru.improve.potato.services.user.UserService;
 import ru.improve.potato.validators.user.UserValidator;
 
@@ -33,9 +35,14 @@ public class UserController {
     private final UserValidator userValidator;
     private final UserMapper userMapper;
 
-    @GetMapping("/{id}")
-    public UserGetResponse getUserById(@PathVariable UUID id) {
-        return userMapper.toUserGetResponse(userService.getById(id));
+    @GetMapping()
+    public UserGetResponse getUserById(@RequestBody UserGetRequest userGetRequest,
+                                       BindingResult bindingResult) {
+
+        userValidator.validate(userGetRequest, bindingResult);
+
+        User user = userService.getById(userGetRequest.getId());
+        return userMapper.toUserGetResponse(user);
     }
 
     @PostMapping()

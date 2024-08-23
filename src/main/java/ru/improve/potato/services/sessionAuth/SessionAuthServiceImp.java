@@ -44,13 +44,16 @@ public class SessionAuthServiceImp implements SessionAuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         SessionUserDetails sessionUser = (SessionUserDetails) authentication.getPrincipal();
 
-        return sessionMapper.toSessionResponseDto(sessionUser.getSession(), jwtService.extractExpirationTime(sessionUser.getSession().getAccessToken()));
+        return sessionMapper.toSessionResponseDto(sessionUser.getSession(),
+                jwtService.extractExpirationTime(sessionUser.getSession().getAccessToken()));
     }
 
     @Transactional
     @Override
     public void logout(SessionUserDetails sessionUserDetails) {
-        Session session = sessionService.getSessionByAccessToken(sessionUserDetails.getSession().getId());
+        Session session = Optional.ofNullable(sessionService.getSessionByAccessToken(sessionUserDetails.getSession().getAccessToken()))
+                .orElseThrow(() -> new IncorrectJwtTokenException("incorrect jwt token", List.of("accessToken")));
+
         session.setEnabled(false);
         SecurityContextHolder.clearContext();
     }
