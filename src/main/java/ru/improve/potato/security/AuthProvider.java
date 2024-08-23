@@ -47,12 +47,7 @@ public class AuthProvider implements AuthenticationProvider {
             Session session = new Session(accessToken, refreshToken, true, user);
             sessionService.save(session);
 
-            SessionUserDetails sessionUser = SessionUserDetails.builder()
-                    .userId(user.getId())
-                    .session(session)
-                    .email(user.getEmail())
-                    .password(user.getPassword())
-                    .build();
+            SessionUserDetails sessionUser = SessionUserDetailsFactory.createSessionUser(session.getUser(), session);
 
             return new UsernamePasswordAuthenticationToken(sessionUser, password, sessionUser.getAuthorities());
         } else {

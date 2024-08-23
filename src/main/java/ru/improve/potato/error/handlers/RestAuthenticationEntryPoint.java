@@ -1,4 +1,4 @@
-package ru.improve.potato.error.security;
+package ru.improve.potato.error.handlers;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

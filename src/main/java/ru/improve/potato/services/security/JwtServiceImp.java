@@ -1,4 +1,4 @@
-package ru.improve.potato.services.security.imp;
+package ru.improve.potato.services.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -9,11 +9,20 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import ru.improve.potato.services.security.JwtService;
+import ru.improve.potato.error.exceptions.IncorrectJwtTokenException;
+import ru.improve.potato.models.Session;
+import ru.improve.potato.models.User;
+import ru.improve.potato.security.SessionUserDetails;
+import ru.improve.potato.security.SessionUserDetailsFactory;
+import ru.improve.potato.security.TokenRefresh;
+import ru.improve.potato.services.session.SessionService;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -28,6 +37,8 @@ public class JwtServiceImp implements JwtService {
 
     @Value("${token.refresh.ttl}")
     private int refreshTokenTimeOfLife;
+
+    private final SessionService sessionService;
 
     @PostConstruct
     private void init() {
@@ -64,6 +75,22 @@ public class JwtServiceImp implements JwtService {
     }
 
     @Override
+    public TokenRefresh refreshUserToken(String refreshToken, Session session) {
+        User user = session.getUser();
+
+        if (!verifyToken(refreshToken)) {
+            throw new IncorrectJwtTokenException("incorrect refreshToken", List.of("refreshToken"));
+        }
+
+        TokenRefresh tokenRefresh = TokenRefresh.builder()
+                .accessToken(generateAccessToken(user.getId(), user.getEmail()))
+                .refreshToken(generateRefreshToken(user.getId(), user.getEmail()))
+                .build();
+
+        return tokenRefresh;
+    }
+
+    @Override
     public boolean verifyToken(String token) {
         try {
             Jws<Claims> claims = Jwts.parserBuilder()
@@ -93,6 +120,20 @@ public class JwtServiceImp implements JwtService {
                 .build()
                 .parseClaimsJws(token)
                 .getBody().getExpiration();
+    }
+
+    @Override
+    public Authentication getAuthentication(String accessToken) {
+        Session session = sessionService.getSessionByAccessToken(accessToken);
+
+        if (session == null) {
+            throw new RuntimeException();
+        }
+
+        User user = session.getUser();
+        SessionUserDetails sessionUser = SessionUserDetailsFactory.createSessionUser(user, session);
+
+        return new UsernamePasswordAuthenticationToken(sessionUser, "", user.getAuthorities());
     }
 
     private boolean isExpired(Date expirationDate) {

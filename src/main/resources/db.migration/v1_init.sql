@@ -21,6 +21,7 @@ create table sessions (
                          enabled boolean not null,
                          user_id uuid not null references users("id") on delete cascade
 );
+truncate table sessions;
 
 drop table wallets;
 create table wallets (

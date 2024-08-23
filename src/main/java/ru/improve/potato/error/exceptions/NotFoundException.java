@@ -1,6 +1,4 @@
-package ru.improve.potato.error.working.exceptions;
-
-import ru.improve.potato.error.working.CustomPotatoException;
+package ru.improve.potato.error.exceptions;
 
 import java.util.List;
 

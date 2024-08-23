@@ -5,7 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import ru.improve.potato.error.working.exceptions.NotFoundException;
+import ru.improve.potato.error.exceptions.NotFoundException;
 import ru.improve.potato.repositories.UserRepository;
 
 import java.util.Collections;

@@ -6,15 +6,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import ru.improve.potato.error.exceptions.IncorrectJwtTokenException;
 import ru.improve.potato.services.security.JwtService;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -40,21 +41,15 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String token = authHead.substring(BEARER_PREFIX.length());
 
-        if (token != null && jwtService.verifyToken(token)) {
+        if (jwtService.verifyToken(token)) {
             try {
-                String email = jwtService.extractEmail(token);
-                UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+                Authentication authToken = jwtService.getAuthentication(token);
 
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        userDetails.getPassword(),
-                        userDetails.getAuthorities());
-
-                if (SecurityContextHolder.getContext().getAuthentication() == null) {
+                if (authToken != null) {
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             } catch (Exception ex) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid JWT Token");
+                throw new IncorrectJwtTokenException("incorrect jwt token", List.of("accessToken"));
             }
         }
         filterChain.doFilter(request, response);

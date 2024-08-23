@@ -4,11 +4,11 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.improve.potato.error.exceptions.NotFoundException;
 import ru.improve.potato.models.Session;
 import ru.improve.potato.repositories.SessionRepository;
-import ru.improve.potato.services.security.JwtService;
-import ru.improve.potato.services.user.UserService;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -16,11 +16,23 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SessionServiceImp implements SessionService {
 
-    private final UserService userService;
-
     private final SessionRepository sessionRepository;
 
-    private final JwtService jwtService;
+    @Override
+    public Session getSessionByAccessToken(UUID id) {
+         return sessionRepository.findById(id)
+                 .orElseThrow(() -> new NotFoundException("session not found", List.of("id")));
+    }
+
+    @Override
+    public Session getSessionByAccessToken(String accessToken) {
+        return sessionRepository.findByAccessToken(accessToken).orElse(null);
+    }
+
+    @Override
+    public Session getSessionByRefreshToken(String accessToken) {
+        return sessionRepository.findByAccessToken(accessToken).orElse(null);
+    }
 
     @Transactional
     @Override
