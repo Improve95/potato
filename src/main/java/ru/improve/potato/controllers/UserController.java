@@ -21,6 +21,8 @@ import ru.improve.potato.mappers.UserMapper;
 import ru.improve.potato.services.user.UserService;
 import ru.improve.potato.validators.user.UserValidator;
 
+import java.util.UUID;
+
 @RestController(value = "userController")
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -32,7 +34,7 @@ public class UserController {
     private final UserMapper userMapper;
 
     @GetMapping("/{id}")
-    public UserGetResponse getUserById(@PathVariable int id) {
+    public UserGetResponse getUserById(@PathVariable UUID id) {
         return userMapper.toUserGetResponse(userService.getById(id));
     }
 
@@ -48,7 +50,7 @@ public class UserController {
     @PatchMapping("/{id}")
     public ResponseEntity<HttpStatus> patchUserById(@RequestBody @Valid UserPatchRequest userPatchRequest,
                                                     BindingResult bindingResult,
-                                                    @PathVariable("id") int id) {
+                                                    @PathVariable("id") UUID id) {
 
         userValidator.validate(userPatchRequest, bindingResult);
 

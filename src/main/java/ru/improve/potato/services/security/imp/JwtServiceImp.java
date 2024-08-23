@@ -86,6 +86,15 @@ public class JwtServiceImp implements JwtService {
                 .getSubject();
     }
 
+    @Override
+    public Date extractExpirationTime(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getJwtSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody().getExpiration();
+    }
+
     private boolean isExpired(Date expirationDate) {
         return expirationDate.after(new Date());
     }

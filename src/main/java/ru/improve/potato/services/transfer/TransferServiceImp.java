@@ -10,7 +10,7 @@ import ru.improve.potato.dto.transfer.TransferPostResponse;
 import ru.improve.potato.models.Wallet;
 import ru.improve.potato.models.transfer.Transfer;
 import ru.improve.potato.models.transfer.TransferType;
-import ru.improve.potato.models.user.User;
+import ru.improve.potato.models.User;
 import ru.improve.potato.validators.transfer.TransferValidation;
 
 import java.time.LocalDateTime;

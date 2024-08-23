@@ -7,15 +7,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.improve.potato.dto.session.LoginRequest;
 import ru.improve.potato.dto.session.LoginResponse;
-import ru.improve.potato.dto.user.UserPostResponse;
 import ru.improve.potato.dto.user.UserPostRequest;
+import ru.improve.potato.dto.user.UserPostResponse;
 import ru.improve.potato.mappers.UserMapper;
-import ru.improve.potato.models.user.User;
+import ru.improve.potato.models.User;
 import ru.improve.potato.services.security.AuthenticationService;
 import ru.improve.potato.services.security.JwtService;
 import ru.improve.potato.services.user.UserService;
-
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -50,11 +48,12 @@ public class AuthenticationServiceImp implements AuthenticationService {
 
         User user = userService.getByEmail(loginRequest.getEmail());
 
-        return LoginResponse.builder()
+        /*return LoginResponse.builder()
                 .sessionId(UUID.randomUUID())
                 .accessToken(jwtService.generateAccessToken(user.getId(), user.getEmail()))
                 .refreshToken(jwtService.generateRefreshToken(user.getId(), user.getEmail()))
-                .build();
+                .build();*/
+        return null;
     }
 
 }

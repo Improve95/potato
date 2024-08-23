@@ -12,10 +12,10 @@ import ru.improve.potato.error.working.exceptions.AlreadyExistException;
 import ru.improve.potato.error.working.exceptions.NotFoundException;
 import ru.improve.potato.repositories.UserRepository;
 import ru.improve.potato.models.Wallet;
-import ru.improve.potato.models.user.Role;
-import ru.improve.potato.models.user.User;
+import ru.improve.potato.models.User;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +31,6 @@ public class UserServiceImp implements UserService {
     public UserPostResponse save(User user) {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole(Role.USER);
 
         Wallet wallet = new Wallet(1000, user);
         user.setWallet(wallet);
@@ -46,7 +45,7 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public User getById(int id) {
+    public User getById(UUID id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("user not found", List.of("id")));
     }
@@ -59,7 +58,7 @@ public class UserServiceImp implements UserService {
 
     @Transactional
     @Override
-    public void patchById(UserPatchRequest userPatchRequest, int id) {
+    public void patchById(UserPatchRequest userPatchRequest, UUID id) {
         User patchUser = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("user not found", List.of("id")));
 

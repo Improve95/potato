@@ -6,6 +6,7 @@ import ru.improve.potato.dto.user.UserPostRequest;
 import ru.improve.potato.dto.user.UserPostResponse;
 
 public interface AuthenticationService {
+
     UserPostResponse signUp(UserPostRequest userPostRequest);
 
     LoginResponse login(LoginRequest loginRequest);

@@ -1,40 +1,27 @@
-package ru.improve.potato.models.user;
+package ru.improve.potato.models;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import ru.improve.potato.models.Wallet;
 
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.UUID;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-public class User implements UserDetails {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+public class User extends BaseEntity implements UserDetails {
 
     @Column(name = "first_name")
     private String firstName;
@@ -50,11 +37,11 @@ public class User implements UserDetails {
 
     private String password;
 
-    @Enumerated(value = EnumType.STRING)
-    private Role role;
-
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Wallet wallet;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Session> sessionList;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
