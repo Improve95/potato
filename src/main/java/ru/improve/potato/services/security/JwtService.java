@@ -1,6 +1,5 @@
 package ru.improve.potato.services.security;
 
-import org.springframework.security.core.Authentication;
 import ru.improve.potato.models.Session;
 import ru.improve.potato.security.TokenRefresh;
 
@@ -20,6 +19,4 @@ public interface JwtService {
     String extractEmail(String token);
 
     Date extractExpirationTime(String token);
-
-    Authentication getAuthentication(String accessToken);
 }

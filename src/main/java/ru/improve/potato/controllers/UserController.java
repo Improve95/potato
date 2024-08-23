@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -20,6 +21,7 @@ import ru.improve.potato.dto.user.UserPostRequest;
 import ru.improve.potato.dto.user.UserPostResponse;
 import ru.improve.potato.mappers.UserMapper;
 import ru.improve.potato.models.User;
+import ru.improve.potato.security.SessionUserDetails;
 import ru.improve.potato.services.user.UserService;
 import ru.improve.potato.validators.user.UserValidator;
 
@@ -36,7 +38,8 @@ public class UserController {
     private final UserMapper userMapper;
 
     @GetMapping()
-    public UserGetResponse getUserById(@RequestBody UserGetRequest userGetRequest,
+    public UserGetResponse getUserById(@AuthenticationPrincipal SessionUserDetails sessionUserDetails,
+                                       @RequestBody UserGetRequest userGetRequest,
                                        BindingResult bindingResult) {
 
         userValidator.validate(userGetRequest, bindingResult);

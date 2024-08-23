@@ -6,16 +6,21 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import ru.improve.potato.error.exceptions.DisabledSessionException;
 import ru.improve.potato.error.exceptions.IncorrectJwtTokenException;
+import ru.improve.potato.models.Session;
+import ru.improve.potato.models.User;
 import ru.improve.potato.services.security.JwtService;
+import ru.improve.potato.services.session.SessionService;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -24,6 +29,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private final String HEADER_NAME = "Authorization";
     private final String BEARER_PREFIX = "Bearer ";
+
+    private final SessionService sessionService;
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
@@ -42,14 +49,19 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = authHead.substring(BEARER_PREFIX.length());
 
         if (jwtService.verifyToken(token)) {
-            try {
-                Authentication authToken = jwtService.getAuthentication(token);
+            Session session = Optional.ofNullable(sessionService.getSessionByAccessToken(token))
+                    .orElseThrow(() -> new IncorrectJwtTokenException("incorrect jwt token", List.of("accessToken")));
 
-                if (authToken != null) {
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
-                }
-            } catch (Exception ex) {
-                throw new IncorrectJwtTokenException("incorrect jwt token", List.of("accessToken"));
+            if (!session.isEnabled()) throw new DisabledSessionException();
+
+            User user = session.getUser();
+            SessionUserDetails sessionUser = SessionUserDetailsFactory.createSessionUser(user, session);
+
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                    sessionUser, "", user.getAuthorities());
+
+            if (authToken != null) {
+                SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
         filterChain.doFilter(request, response);

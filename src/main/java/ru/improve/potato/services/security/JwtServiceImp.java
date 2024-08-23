@@ -9,14 +9,10 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import ru.improve.potato.error.exceptions.IncorrectJwtTokenException;
 import ru.improve.potato.models.Session;
 import ru.improve.potato.models.User;
-import ru.improve.potato.security.SessionUserDetails;
-import ru.improve.potato.security.SessionUserDetailsFactory;
 import ru.improve.potato.security.TokenRefresh;
 import ru.improve.potato.services.session.SessionService;
 
@@ -120,20 +116,6 @@ public class JwtServiceImp implements JwtService {
                 .build()
                 .parseClaimsJws(token)
                 .getBody().getExpiration();
-    }
-
-    @Override
-    public Authentication getAuthentication(String accessToken) {
-        Session session = sessionService.getSessionByAccessToken(accessToken);
-
-        if (session == null) {
-            throw new RuntimeException();
-        }
-
-        User user = session.getUser();
-        SessionUserDetails sessionUser = SessionUserDetailsFactory.createSessionUser(user, session);
-
-        return new UsernamePasswordAuthenticationToken(sessionUser, "", user.getAuthorities());
     }
 
     private boolean isExpired(Date expirationDate) {
