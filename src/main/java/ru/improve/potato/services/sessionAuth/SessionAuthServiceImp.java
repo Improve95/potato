@@ -6,8 +6,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import ru.improve.potato.dto.session.LoginRequest;
-import ru.improve.potato.dto.session.LoginResponse;
+import ru.improve.potato.dto.session.CreateSessionRequest;
+import ru.improve.potato.dto.session.CreateSessionResponse;
 import ru.improve.potato.mappers.AuthMapper;
 import ru.improve.potato.security.SessionUserDetails;
 import ru.improve.potato.services.security.JwtService;
@@ -22,17 +22,17 @@ public class SessionAuthServiceImp implements SessionAuthService {
     private final JwtService jwtService;
 
     @Override
-    public LoginResponse login(LoginRequest loginRequest) {
+    public CreateSessionResponse login(CreateSessionRequest createSessionRequest) {
         Authentication authentication = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        loginRequest.getEmail(),
-                        loginRequest.getPassword()
+                        createSessionRequest.getEmail(),
+                        createSessionRequest.getPassword()
                 )
         );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         SessionUserDetails sessionUser = (SessionUserDetails) authentication.getPrincipal();
 
-        return authMapper.toLoginResponse(sessionUser, jwtService.extractExpirationTime(sessionUser.getSession().getAccessToken()));
+        return authMapper.toLoginResponse(sessionUser.getSession(), jwtService.extractExpirationTime(sessionUser.getSession().getAccessToken()));
     }
 }

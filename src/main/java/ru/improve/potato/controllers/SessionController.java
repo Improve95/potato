@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.improve.potato.dto.session.LoginRequest;
-import ru.improve.potato.dto.session.LoginResponse;
+import ru.improve.potato.dto.session.CreateSessionRequest;
+import ru.improve.potato.dto.session.CreateSessionResponse;
 import ru.improve.potato.services.sessionAuth.SessionAuthService;
 import ru.improve.potato.validators.auth.AuthValidator;
 
@@ -26,12 +26,12 @@ public class SessionController {
     private final AuthValidator authValidator;
 
     @PostMapping("/login")
-    public LoginResponse login(@RequestBody @Valid LoginRequest loginRequest,
-                               BindingResult bindingResult) {
+    public CreateSessionResponse login(@RequestBody @Valid CreateSessionRequest createSessionRequest,
+                                       BindingResult bindingResult) {
 
-        authValidator.validate(loginRequest, bindingResult);
+        authValidator.validate(createSessionRequest, bindingResult);
 
-        return sessionAuthService.login(loginRequest);
+        return sessionAuthService.login(createSessionRequest);
     }
 
     /*@PostMapping("/logout")

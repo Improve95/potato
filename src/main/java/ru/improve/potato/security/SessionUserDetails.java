@@ -1,6 +1,7 @@
 package ru.improve.potato.security;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,17 +15,14 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class SessionUserDetails implements UserDetails {
 
-    private UUID id;
+    private UUID userId;
 
     private Session session;
 
     private String email;
-
-    private String firstName;
-
-    private String secondName;
 
     private String password;
 

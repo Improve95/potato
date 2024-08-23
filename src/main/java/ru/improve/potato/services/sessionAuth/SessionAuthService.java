@@ -1,9 +1,9 @@
 package ru.improve.potato.services.sessionAuth;
 
-import ru.improve.potato.dto.session.LoginRequest;
-import ru.improve.potato.dto.session.LoginResponse;
+import ru.improve.potato.dto.session.CreateSessionRequest;
+import ru.improve.potato.dto.session.CreateSessionResponse;
 
 public interface SessionAuthService {
 
-    LoginResponse login(LoginRequest loginRequest);
+    CreateSessionResponse login(CreateSessionRequest createSessionRequest);
 }

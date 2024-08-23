@@ -5,8 +5,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.improve.potato.dto.session.LoginRequest;
-import ru.improve.potato.dto.session.LoginResponse;
+import ru.improve.potato.dto.session.CreateSessionRequest;
+import ru.improve.potato.dto.session.CreateSessionResponse;
 import ru.improve.potato.dto.user.UserPostRequest;
 import ru.improve.potato.dto.user.UserPostResponse;
 import ru.improve.potato.mappers.UserMapper;
@@ -40,13 +40,13 @@ public class AuthenticationServiceImp implements AuthenticationService {
     }
 
     @Override
-    public LoginResponse login(LoginRequest loginRequest) {
+    public CreateSessionResponse login(CreateSessionRequest createSessionRequest) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                loginRequest.getEmail(),
-                loginRequest.getPassword()
+                createSessionRequest.getEmail(),
+                createSessionRequest.getPassword()
         ));
 
-        User user = userService.getByEmail(loginRequest.getEmail());
+        User user = userService.getByEmail(createSessionRequest.getEmail());
 
         /*return LoginResponse.builder()
                 .sessionId(UUID.randomUUID())
