@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import ru.improve.potato.dto.session.CreateSessionRequest;
 import ru.improve.potato.dto.session.SessionResponseDto;
 import ru.improve.potato.dto.session.RefreshSessionRequest;
-import ru.improve.potato.error.exceptions.IncorrectJwtTokenException;
+import ru.improve.potato.error.exceptions.security.IncorrectJwtTokenException;
 import ru.improve.potato.mappers.SessionMapper;
 import ru.improve.potato.models.Session;
 import ru.improve.potato.security.SessionUserDetails;

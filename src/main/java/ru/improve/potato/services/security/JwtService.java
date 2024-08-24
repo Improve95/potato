@@ -19,4 +19,6 @@ public interface JwtService {
     String extractEmail(String token);
 
     Date extractExpirationTime(String token);
+
+    boolean isValidByTime(Date expirationDate);
 }

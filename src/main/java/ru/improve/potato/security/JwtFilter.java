@@ -11,8 +11,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import ru.improve.potato.error.exceptions.DisabledSessionException;
-import ru.improve.potato.error.exceptions.IncorrectJwtTokenException;
+import ru.improve.potato.error.exceptions.security.DisabledSessionException;
+import ru.improve.potato.error.exceptions.security.IncorrectJwtTokenException;
 import ru.improve.potato.models.Session;
 import ru.improve.potato.models.User;
 import ru.improve.potato.services.security.JwtService;
@@ -48,8 +48,9 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String token = authHead.substring(BEARER_PREFIX.length());
 
+        Session session = null;
         if (jwtService.verifyToken(token)) {
-            Session session = Optional.ofNullable(sessionService.getSessionByAccessToken(token))
+            session = Optional.ofNullable(sessionService.getSessionByAccessToken(token))
                     .orElseThrow(() -> new IncorrectJwtTokenException("incorrect jwt token", List.of("accessToken")));
 
             if (!session.isEnabled()) throw new DisabledSessionException();
@@ -63,7 +64,11 @@ public class JwtFilter extends OncePerRequestFilter {
             if (authToken != null) {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
+        } else {
+            session.setEnabled(false);
+            sessionService.save(session);
         }
+
         filterChain.doFilter(request, response);
     }
 }

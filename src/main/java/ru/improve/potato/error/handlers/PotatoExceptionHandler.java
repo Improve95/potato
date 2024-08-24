@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.improve.potato.error.exceptions.AlreadyExistException;
 import ru.improve.potato.error.exceptions.CustomPotatoException;
-import ru.improve.potato.error.exceptions.IncorrectJwtTokenException;
+import ru.improve.potato.error.exceptions.security.IncorrectJwtTokenException;
 import ru.improve.potato.error.exceptions.OnCreateException;
 import ru.improve.potato.error.responseBody.CustomErrorResponse;
 import ru.improve.potato.error.responseBody.DefaultErrorResponse;
