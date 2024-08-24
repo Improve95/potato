@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.improve.potato.error.exceptions.AlreadyExistException;
 import ru.improve.potato.error.exceptions.CustomPotatoException;
+import ru.improve.potato.error.exceptions.security.DisabledSessionException;
 import ru.improve.potato.error.exceptions.security.IncorrectJwtTokenException;
 import ru.improve.potato.error.exceptions.OnCreateException;
 import ru.improve.potato.error.responseBody.CustomErrorResponse;
@@ -43,7 +44,8 @@ public class PotatoExceptionHandler {
 
         if (ex instanceof BadCredentialsException ||
                 ex instanceof AuthenticationException ||
-                ex instanceof IncorrectJwtTokenException) {
+                ex instanceof IncorrectJwtTokenException ||
+                ex instanceof DisabledSessionException) {
 
             return HttpStatus.FORBIDDEN;
         }
