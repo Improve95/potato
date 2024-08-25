@@ -31,7 +31,6 @@ public class UserServiceImp implements UserService {
     @Transactional
     @Override
     public UserPostResponse save(User user) {
-
         log.info("UserService: save");
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
