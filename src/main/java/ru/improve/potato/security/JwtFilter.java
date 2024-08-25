@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.improve.potato.error.exceptions.security.DisabledSessionException;
+import ru.improve.potato.error.exceptions.security.ExpiredSessionException;
 import ru.improve.potato.error.exceptions.security.IncorrectJwtTokenException;
 import ru.improve.potato.models.Session;
 import ru.improve.potato.models.User;
@@ -40,7 +41,7 @@ public class JwtFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        log.info("\nlogger: doFilterInternal");
+        log.info("JwtFilter: doFilterInternal");
 
         String authHead = request.getHeader(HEADER_NAME);
         if (authHead == null || authHead.isBlank() || !authHead.startsWith(BEARER_PREFIX)) {
@@ -50,23 +51,25 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String token = authHead.substring(BEARER_PREFIX.length());
 
-        Session session = null;
-        if (jwtService.verifyToken(token)) {
-            session = Optional.ofNullable(sessionService.getSessionByAccessToken(token))
-                    .orElseThrow(() -> new IncorrectJwtTokenException("incorrect jwt token", List.of("accessToken")));
+        try {
+            if (jwtService.verifyToken(token)) {
+                Session session = Optional.ofNullable(sessionService.getSessionByAccessToken(token))
+                        .orElseThrow(() -> new IncorrectJwtTokenException("incorrect jwt token", List.of("accessToken")));
 
-            if (!session.isEnabled()) throw new DisabledSessionException();
+                if (!session.isEnabled()) throw new DisabledSessionException();
 
-            User user = session.getUser();
-            SessionUserDetails sessionUser = SessionUserDetailsFactory.createSessionUser(user, session);
+                User user = session.getUser();
+                SessionUserDetails sessionUser = SessionUserDetailsFactory.createSessionUser(user, session);
 
-            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                    sessionUser, "", user.getAuthorities());
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                        sessionUser, "", user.getAuthorities());
 
-            if (authToken != null) {
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                if (authToken != null) {
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
             }
-        } else {
+        } catch (ExpiredSessionException ex) {
+            Session session = sessionService.getSessionByAccessToken(token);
             session.setEnabled(false);
             sessionService.save(session);
         }

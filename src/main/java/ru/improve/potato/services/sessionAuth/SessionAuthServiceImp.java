@@ -36,7 +36,7 @@ public class SessionAuthServiceImp implements SessionAuthService {
 
     @Override
     public SessionResponseDto login(CreateSessionRequest createSessionRequest) {
-        log.info("sessionAuthController - login");
+        log.info("sessionAuthSessionAuthService - login");
 
         Authentication authentication = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
