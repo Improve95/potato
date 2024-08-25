@@ -21,7 +21,7 @@ import java.time.format.DateTimeParseException;
 @Slf4j
 public class PotatoExceptionHandler {
 
-    @ExceptionHandler
+    @ExceptionHandler({Exception.class, AuthenticationException.class})
     public ResponseEntity<DefaultErrorResponse> handleAllExceptions(Exception ex) {
         DefaultErrorResponse defaultErrorResponse = new DefaultErrorResponse(ex.getMessage());
 //        ex.printStackTrace();
