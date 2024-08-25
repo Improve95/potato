@@ -34,7 +34,10 @@ public class UserController {
     private final UserMapper userMapper;
 
     @GetMapping()
-    public UserGetResponse getUserById(@AuthenticationPrincipal SessionUserDetails sessionUserDetails) {
+    public UserGetResponse getUser(@AuthenticationPrincipal SessionUserDetails sessionUserDetails) {
+
+        log.info("UserController - get user");
+
         User user = userService.getById(sessionUserDetails.getUserId());
         return userMapper.toUserGetResponse(user);
     }

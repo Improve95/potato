@@ -2,6 +2,7 @@ package ru.improve.potato.services.user;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImp implements UserService {
 
     private final UserRepository userRepository;
@@ -29,6 +31,7 @@ public class UserServiceImp implements UserService {
     @Transactional
     @Override
     public UserPostResponse save(User user) {
+        log.info("UserService: save");
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 

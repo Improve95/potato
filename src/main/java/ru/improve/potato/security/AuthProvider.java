@@ -29,7 +29,7 @@ public class AuthProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        log.info("logger: authenticate");
+        log.info("authProvider: authenticate");
 
         String email = authentication.getName();
         String password = authentication.getCredentials().toString();

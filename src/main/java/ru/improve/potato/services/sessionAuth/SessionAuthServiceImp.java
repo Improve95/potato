@@ -36,7 +36,7 @@ public class SessionAuthServiceImp implements SessionAuthService {
 
     @Override
     public SessionResponseDto login(CreateSessionRequest createSessionRequest) {
-        log.info("logger: sessinonAuthController - login");
+        log.info("sessionAuthSessionAuthService - login");
 
         Authentication authentication = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -55,6 +55,8 @@ public class SessionAuthServiceImp implements SessionAuthService {
     @Transactional
     @Override
     public void logout(SessionUserDetails sessionUserDetails) {
+        log.info("sessionAuthController - logout");
+        
         Session session = Optional.ofNullable(sessionService.getSessionByAccessToken(sessionUserDetails.getSession().getAccessToken()))
                 .orElseThrow(() -> new IncorrectJwtTokenException("incorrect jwt token", List.of("accessToken")));
 
@@ -65,6 +67,8 @@ public class SessionAuthServiceImp implements SessionAuthService {
     @Transactional
     @Override
     public SessionResponseDto refreshSession(RefreshSessionRequest refreshSessionRequest) {
+        log.info("sessionAuthController - refresh");
+        
         Session session = Optional.ofNullable(sessionService.getSessionByRefreshToken(refreshSessionRequest.getRefreshToken()))
                 .orElseThrow(() -> new IncorrectJwtTokenException("incorrect jwt token", List.of("refreshToken")));
 

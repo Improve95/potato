@@ -10,6 +10,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import ru.improve.potato.error.exceptions.security.ExpiredSessionException;
 import ru.improve.potato.error.exceptions.security.IncorrectJwtTokenException;
 import ru.improve.potato.models.Session;
 import ru.improve.potato.models.User;
@@ -81,26 +82,30 @@ public class JwtServiceImp implements JwtService {
             throw new IncorrectJwtTokenException("incorrect refreshToken", List.of("refreshToken"));
         }
 
-        TokenRefresh tokenRefresh = TokenRefresh.builder()
+        return TokenRefresh.builder()
                 .accessToken(generateAccessToken(user.getId(), user.getEmail()))
                 .refreshToken(generateRefreshToken(user.getId(), user.getEmail()))
                 .build();
-
-        return tokenRefresh;
     }
 
     @Override
     public boolean verifyToken(String token) {
+        Jws<Claims> claims;
+
         try {
-            Jws<Claims> claims = Jwts.parserBuilder()
+            claims = Jwts.parserBuilder()
                     .setSigningKey(getJwtSigningKey())
                     .build()
                     .parseClaimsJws(token);
-
-            return isValidByTime(claims.getBody().getExpiration());
         } catch (Exception ex) {
             return false;
         }
+
+        if (!isValidByTime(claims.getBody().getExpiration())) {
+            throw new ExpiredSessionException("token is expired");
+        }
+
+        return true;
     }
 
     @Override
