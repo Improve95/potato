@@ -2,6 +2,7 @@ package ru.improve.potato.services.sessionAuth;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,6 +24,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class SessionAuthServiceImp implements SessionAuthService {
 
     private final SessionService sessionService;
@@ -34,6 +36,8 @@ public class SessionAuthServiceImp implements SessionAuthService {
 
     @Override
     public SessionResponseDto login(CreateSessionRequest createSessionRequest) {
+        log.info("logger: sessinonAuthController - login");
+
         Authentication authentication = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         createSessionRequest.getEmail(),

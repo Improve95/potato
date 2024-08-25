@@ -40,6 +40,8 @@ public class JwtFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
+        log.info("\nlogger: doFilterInternal");
+
         String authHead = request.getHeader(HEADER_NAME);
         if (authHead == null || authHead.isBlank() || !authHead.startsWith(BEARER_PREFIX)) {
             filterChain.doFilter(request, response);
