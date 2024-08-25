@@ -2,6 +2,7 @@ package ru.improve.potato.services.sessionAuth;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,6 +24,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class SessionAuthServiceImp implements SessionAuthService {
 
     private final SessionService sessionService;
@@ -34,6 +36,8 @@ public class SessionAuthServiceImp implements SessionAuthService {
 
     @Override
     public SessionResponseDto login(CreateSessionRequest createSessionRequest) {
+        log.info("sessionAuthController - login");
+
         Authentication authentication = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         createSessionRequest.getEmail(),
@@ -51,6 +55,8 @@ public class SessionAuthServiceImp implements SessionAuthService {
     @Transactional
     @Override
     public void logout(SessionUserDetails sessionUserDetails) {
+        log.info("sessionAuthController - logout");
+        
         Session session = Optional.ofNullable(sessionService.getSessionByAccessToken(sessionUserDetails.getSession().getAccessToken()))
                 .orElseThrow(() -> new IncorrectJwtTokenException("incorrect jwt token", List.of("accessToken")));
 
@@ -61,6 +67,8 @@ public class SessionAuthServiceImp implements SessionAuthService {
     @Transactional
     @Override
     public SessionResponseDto refreshSession(RefreshSessionRequest refreshSessionRequest) {
+        log.info("sessionAuthController - refresh");
+        
         Session session = Optional.ofNullable(sessionService.getSessionByRefreshToken(refreshSessionRequest.getRefreshToken()))
                 .orElseThrow(() -> new IncorrectJwtTokenException("incorrect jwt token", List.of("refreshToken")));
 

@@ -1,4 +1,4 @@
-drop table users cascade ;
+drop table if exists users cascade ;
 create table users (
                        id uuid primary key not null ,
                        created_at timestamp without time zone not null ,
@@ -11,7 +11,7 @@ create table users (
                        password varchar(255) not null
 );
 
-drop table sessions;
+drop table if exists sessions;
 create table sessions (
                          id uuid primary key not null ,
                          created_at timestamp without time zone not null ,
@@ -23,7 +23,7 @@ create table sessions (
 );
 truncate table sessions;
 
-drop table wallets;
+drop table if exists wallets;
 create table wallets (
                          id uuid primary key not null ,
                          created_at timestamp without time zone not null ,
