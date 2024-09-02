@@ -3,11 +3,9 @@ package ru.improve.potato.dto.payment;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.extern.jackson.Jacksonized;
 
 @Getter
 @Setter
-@Jacksonized
 @NoArgsConstructor
 public class PaymentPostRequest {
 

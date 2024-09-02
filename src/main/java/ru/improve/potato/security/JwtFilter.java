@@ -34,7 +34,6 @@ public class JwtFilter extends OncePerRequestFilter {
     private final SessionService sessionService;
 
     private final JwtService jwtService;
-    private final UserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
