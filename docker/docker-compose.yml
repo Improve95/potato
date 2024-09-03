@@ -1,17 +1,15 @@
-version: "1"
-
 services:
   db:
     restart: always
-    image: postgres:16-bullseye
+    image: postgres:13.16
     environment:
-      USERNAME: postgres
-      PASSWORD: postgres
-      DB_NAME: walletDB
+      POSTGRES_USERNAME: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: walletDB
     volumes:
       - ./pgdata:/var/lib/postgresql/data
     ports:
       - 5430:5432
       
-  app:
-    build: potato
+  # app:
+  #   build: potato

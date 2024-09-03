@@ -120,3 +120,4 @@ gradlew.bat
 
 # secret token file #
 src/main/resources/signingKey.properties
+docker/pgdata

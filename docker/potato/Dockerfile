@@ -1,4 +1,4 @@
-FROM openjdk:23-ea-17-jdk-bullseye
+FROM openjdk:24-jdk-oracle
 
 WORKDIR /potatoApp
 
