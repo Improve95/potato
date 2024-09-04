@@ -4,7 +4,7 @@ WORKDIR /potatoApp
 
 COPY potato-0.0.1.jar .
 
-ENV SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/walletDB
+ENV SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5430/walletDB
 ENV POSTGRES_USER=postgres
 ENV POSTGRES_PASSWORD=postgres
 
