@@ -1,9 +1,9 @@
 compose_up:
-	docker-compose -f docker/docker-compose.yml up --force-recreate
+	docker-compose -f docker/docker-compose.yml up
 
 compose_delete:
-	docker-compose -f docker/docker-compose.yml stop && \
-	docker-compose -f docker/docker-compose.yml rm && \
+	docker-compose -f docker/docker-compose.yml stop
+	docker-compose -f docker/docker-compose.yml rm
 	sudo rm -rf docker/pgdata
 
 potato_image_delete:
